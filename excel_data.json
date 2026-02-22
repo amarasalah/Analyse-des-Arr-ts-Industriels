@@ -1,0 +1,1602 @@
+{
+  "fÃ©️vrier": {
+    "semaine 1": [
+      [
+        "Etat des arrêts avec les Temps de semaine"
+      ],
+      [],
+      [
+        "Date",
+        "Temps d’arrêt total",
+        null,
+        "Causes des arrêts",
+        null,
+        null,
+        null,
+        null,
+        "Totaux par semaine (01/02 → 08/02) :"
+      ],
+      [
+        46054,
+        "1 h 20 min ",
+        null,
+        "Changement du moule 12 vers 16",
+        null,
+        null,
+        null,
+        null,
+        "Total  (01/02 → 08/02/2026) :  → 16 h 35 min"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Démontage du moule 16 et montage du moule 20"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Nettoyage du malaxeur"
+      ],
+      [
+        46055,
+        "50 min ",
+        null,
+        "Serrage et réglage du moule 16"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Nettoyage du malaxeur (répété 2 fois)"
+      ],
+      [
+        46056,
+        "2h 25 min ",
+        null,
+        "Changement de moule (16 fermé → 16)"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Nettoyage du malaxeur (répété 2 fois)"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Panne au niveau de la bascule d’eau"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Réglage de la bascule d’eau"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Réglage du capteur d’ascenseur"
+      ],
+      [
+        46057,
+        "4h ",
+        null,
+        "Réparation de la bascule d’eau"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Nettoyage du malaxeur (répété 1 fois )"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Chargement gasoil pour Fenwick n°08"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Changement de moule (16 fermé → 16)"
+      ],
+      [
+        null,
+        null,
+        null,
+        "coincement de la porte de la trémie sable 0/4"
+      ],
+      [
+        46058,
+        "2h 45 min",
+        null,
+        "Problème au niveau du logiciel de centrale"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Nettoyage du malaxeur (répété 2 fois)"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Problème d’air (compresseur)"
+      ],
+      [
+        46059,
+        "1h 20 min ",
+        null,
+        "Serrage et réglage du moule"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Nettoyage du malaxeur (répété 2 fois)"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Réglage du capteur d’ascenseur"
+      ],
+      [
+        46060,
+        "2h 45 min ",
+        null,
+        "Serrage et réglage du moule"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Soudure du vérin de tiroir"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Montage du support du capteur de moule"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Chargement de gasoil pour Fenwick n°08"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Nettoyage du malaxeur (répété 2 fois)"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Changement du flexible de tiroir"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Réglage du capteur avant du rouleau planche"
+      ],
+      [
+        46061,
+        "1h 10 min ",
+        null,
+        " changement de moule [ panne au niveau l'introducteur de moule ] "
+      ]
+    ],
+    "semaine 2": [
+      [
+        "Etat des arrêts avec les Temps de semaine"
+      ],
+      [],
+      [
+        "Date",
+        "Temps d’arrêt total",
+        null,
+        "Causes des arrêts",
+        null,
+        null,
+        null,
+        null,
+        "Totaux par semaine (09/02 → 15/02) :"
+      ],
+      [
+        46062,
+        "1h 55 min ",
+        null,
+        "Changement de moule",
+        null,
+        null,
+        null,
+        null,
+        "Total  (09/02 → 15/02/2026) :→ 16 h 58 min"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Nettoyage du malaxeur (répété 2 fois )"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Coincement de la chaîne d’extraction des planches"
+      ],
+      [
+        46063,
+        "2h 25 min",
+        null,
+        "Réparation du vibreur de la presse "
+      ],
+      [
+        null,
+        null,
+        null,
+        "Problème au niveau du logiciel de la centrale"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Nettoyage du malaxeur (répété 2 fois )"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Problème d’air au niveau de la presse"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Changement et serrage de deux boulons de la dame de presse"
+      ],
+      [
+        46064,
+        "1h 25 min",
+        null,
+        "Nettoyage du malaxeur (répété 2 fois )"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Soudure du bras de la table de presse"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Coincement de planche au niveau de l’ascenseur"
+      ],
+      [
+        46065,
+        "2h 15 min ",
+        null,
+        "Pause nettoyage du malaxeur (répété 2 fois )"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Montage et réglage du moule "
+      ],
+      [
+        null,
+        null,
+        null,
+        "Problème au niveau du logiciel"
+      ],
+      [
+        46066,
+        "5h 30 min ",
+        null,
+        "Réparation de la table de tiroir"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Problème au niveau de la bascule d’eau"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Panne du moteur de la chaîne de presse"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Nettoyage du malaxeur"
+      ],
+      [
+        46067,
+        "1h 35 min ",
+        null,
+        "Panne du compresseur d’air de la centrale"
+      ],
+      [
+        null,
+        null,
+        null,
+        "pause de Travail"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Coincement de planche au niveau de l’ascenseur"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Nettoyage du malaxeur"
+      ],
+      [
+        46068,
+        "1h 53 min",
+        null,
+        "Montage moule 12 + changement et fixation de soufflet de presse"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Réparation de chaîne"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Coincement de planche"
+      ]
+    ],
+    "semaine 3": [
+      [
+        "Etat des arrêts avec les Temps de semaine"
+      ],
+      [],
+      [
+        "Date",
+        "Temps d’arrêt total",
+        null,
+        "Causes des arrêts",
+        null,
+        null,
+        null,
+        null,
+        "Totaux par semaine (16/02 → 21/02) :"
+      ],
+      [
+        46069,
+        "50 min",
+        null,
+        "Nettoyage du malaxeur (répété 2 fois )",
+        null,
+        null,
+        null,
+        null,
+        "Total  (16/02 → 21/02/2026) :  → 24 h 25 min"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Manque de Colonnes vides"
+      ],
+      [
+        46070,
+        "1h 10 min ",
+        null,
+        "Problème d’air au central"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Nettoyage du malaxeur (répété 3 fois )"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Soudure et réglage support de capteur de moule côté cabine"
+      ],
+      [
+        46071,
+        "1h 30 min ",
+        null,
+        "Problème électrique au central"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Nettoyage du malaxeur (répété 3 fois )"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Soudure et réglage du support de capteur de moule côté cabine répété"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Déclenchement armoire de presse (vérification)"
+      ],
+      [
+        46072,
+        "6h 10 min ",
+        null,
+        "Écrasement de câble électrique"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Panne du compresseur ( compresseur / air)"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Changement de courroie de presse"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Changement de moule "
+      ],
+      [
+        null,
+        null,
+        null,
+        "Problème au niveau du logiciel "
+      ],
+      [
+        null,
+        null,
+        null,
+        "Réglage table de tiroir (coincement du moule avec la table)"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Nettoyage du malaxeur "
+      ],
+      [
+        46073,
+        "5h 45 min",
+        null,
+        "Changement de moule "
+      ],
+      [
+        null,
+        null,
+        null,
+        "Changement de vérin de dame"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Réparation du circuit d’air (problèmes d’air )"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Réparation de la fixation du vérin de tiroir"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Intervention au niveau du circuit d’extracteur"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Soudure de l’axe du vérin de dame"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Serrage du plateau de dame"
+      ],
+      [
+        46074,
+        "9heures ",
+        null,
+        "Changement de moule "
+      ],
+      [
+        null,
+        null,
+        null,
+        "Coincement de l’extracteur de planche "
+      ],
+      [
+        null,
+        null,
+        null,
+        "Montage et programmation du variateur d’extracteur"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Défaut de synchronisation entre l’armoire et l’extracteur"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Défaut de positionnement"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Défaut de vitesse"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Mouvements d’extracteur généralement instables"
+      ]
+    ]
+  },
+  "janvier (1)": {
+    "Semaine 1": [
+      [
+        "Etat des arrêts avec les Temps de semaine"
+      ],
+      [],
+      [
+        "Date",
+        "Temps d’arrêt total",
+        null,
+        "Causes des arrêts",
+        null,
+        null,
+        null,
+        null,
+        "Totaux par semaine (02/01 → 10/01) :"
+      ],
+      [
+        46024,
+        "6 h 28 min",
+        null,
+        "Soudure et montage du moule",
+        null,
+        null,
+        null,
+        null,
+        "Total 02→04/01 : 12 h 58 min"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Problème de tiroir"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Soudure d’un élément du tiroir"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Nettoyage du malaxeur"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Réparation du tiroir de presse"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Soudure du réducteur du renverseur de planche"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Coincement de planche"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Changement de moule"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Réparation de la fixation du vérin de dame"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Montage du moteur de l’ascenseur"
+      ],
+      [
+        46025,
+        "4 h 10 min ",
+        null,
+        "Nettoyage moule et malaxeur\r\n\r\nSoudure moule 16 et changement moule 20/16\r\n\r\nRéglage capteur presse\r\n\r\nNettoyage et lavage malaxeur\r\n\r\nDémarrage à 13h15\r\n\r\nRéglage de tiroir\r\n\r\nMontage capteur d’ascenseur\r\n\r\nSoudure bras d’extracteur\r\n\r\nSoudure moule\r\n\r\nNettoyage du malaxeur"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Soudure moule 16 et changement moule 20/16"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Réglage capteur presse"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Nettoyage et lavage malaxeur"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Démarrage à 13h15"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Réglage de tiroir"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Montage capteur d’ascenseur"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Soudure bras d’extracteur"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Soudure moule"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Nettoyage du malaxeur"
+      ],
+      [
+        46026,
+        "2 h 20 min ",
+        null,
+        "Montage moule 16"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Changement de flexible de tiroir, nettoyage table vibrante, changement de moule"
+      ],
+      [],
+      [
+        null,
+        null,
+        null,
+        "Coincement de planche"
+      ],
+      [],
+      [],
+      [],
+      [
+        46027,
+        "5 h 21 min",
+        null,
+        "Nettoyage du moule et vérification",
+        null,
+        null,
+        null,
+        null,
+        "Total 05→10/01 :  → 38 h 41 min"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Coincement de la chaîne escalier + changement du moule "
+      ],
+      [
+        null,
+        null,
+        null,
+        "Problème au niveau de la fixation du boulon du support dame"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Nettoyage du malaxeur (répété deux fois)"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Soudure de grille (répété deux fois)"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Panne au niveau de la chaîne (répété deux fois)"
+      ],
+      [
+        46028,
+        "5h ",
+        null,
+        "Soudure et montage du moule"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Soudure de l’axe du tiroir"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Blocage des planches (répété deux fois)"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Réglage boulon fin de course + lavage du malaxeur"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Panne du flexible du compresseur + test de mélange"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Changement de moule ("
+      ],
+      [
+        null,
+        null,
+        null,
+        "Nettoyage du malaxeur (répété deux fois)"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Coincement de planche"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Soudure du fer plat du moule"
+      ],
+      [
+        46029,
+        "8 h 55 min ",
+        null,
+        "Soudure de la bague du tiroir + nettoyage du moule"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Changement du vérin du tiroir"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Retard du minibus"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Réparation du capteur du moule"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Changement du vibreur de dame + nettoyage du malaxeur"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Coincement de chaîne (fuite de béton au tiroir) + réglage du racleur"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Coincement de chaîne"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Changement du moule 16 vers moule 20"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Dressage du moule 20"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Réglage du capteur du moule"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Réparation du vérin de dame"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Nettoyage du malaxeur"
+      ],
+      [
+        46030,
+        "4h 42 min",
+        null,
+        "Nettoyage du moule / vérification"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Changement de moule (20 → 16)"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Soudure du renverseur des planches"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Réparation de vérin"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Fixation du flexible de tiroir + soudure moule 16"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Nettoyage + attente des colonnes pour séchage"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Coincement de planche"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Changement de courroie de vibreur"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Nettoyage du malaxeur"
+      ],
+      [
+        46031,
+        "7 h40 min",
+        null,
+        "Nettoyage du moule"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Pause"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Problème du compresseur"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Manque de planches"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Panne (masse au niveau du capteur de dame)"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Coincement de planche"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Changement de moule  (introducteur de moule en panne)"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Réparation du capteur du renverseur de planches"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Serrage et contrôle du plateau"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Nettoyage du malaxeur"
+      ],
+      [
+        46032,
+        "7 h 3 min ",
+        null,
+        "Réglage support chariot"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Réglage boulons support dame"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Nettoyage moule (répété 2 fois)"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Changement de moule (répété 2 fois)"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Problème support chariot"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Soudure chaîne escalier"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Démarrage à 13h30"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Panne tige de table vibrante"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Réparation chaîne d’ascenseur"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Réparation vérin de dame"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Coincement de pierre au niveau de la trémie sable 0/4"
+      ],
+      [],
+      []
+    ],
+    "semaine 2": [
+      [
+        "Etat des arrêts avec les Temps de semaine"
+      ],
+      [],
+      [
+        "Date",
+        "Temps d’arrêt total",
+        null,
+        "Causes des arrêts",
+        null,
+        null,
+        null,
+        null,
+        "Totaux par semaine (12/01 → 18/01) :"
+      ],
+      [
+        46034,
+        "2 h 15 min ",
+        null,
+        "Soudure moule 16 et changement de moule (2 h)",
+        null,
+        null,
+        null,
+        null,
+        "Total  (12→18/01) : → 30 h 25 min"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Nettoyage du malaxeur (15 min)"
+      ],
+      [
+        46035,
+        "5 h 30 min ",
+        null,
+        "Montage du moule 16"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Forte casse en production (problème identifié et résolu)"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Fixation du vérin de dame"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Contrôle du vibreur (serrage du tendeur de courroie)"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Nettoyage du malaxeur"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Problème au niveau du groupe hydraulique"
+      ],
+      [
+        46036,
+        "3 h 40 min  ",
+        null,
+        "Problème de fixation du vérin de dame"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Réparation de la chaîne d’ascenseur"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Changement de moule"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Vérification fuite d’huile du vérin de dame"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Nettoyage du malaxeur"
+      ],
+      [
+        46037,
+        "4 h 25 min",
+        null,
+        "Montage de moule"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Coincement de câble de skip"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Changement de moule"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Réglage des deux racleurs de tiroir (fuite de béton)"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Soudure de l’axe du vérin de dame"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Nettoyage du malaxeur"
+      ],
+      [
+        46038,
+        "8 h 25 min",
+        null,
+        "Réglage du tiroir"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Changement du flexible du tiroir"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Fixation des boulons du vérin de dame"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Écrasement du cardan du moteur du vibreur"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Montage du cardan du vibreur"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Vérification du coincement du skip"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Montage de la chaîne de l’extracteur"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Panne du vérin de dame (vérin de réserve non fonctionnel)"
+      ],
+      [
+        46039,
+        "6 h 30 min ",
+        null,
+        "Fixation du vérin de dame"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Retard du transporteur"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Changement du flexible du moule et du vérin de dame"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Montage de la goupille du vérin et soudure du vérin de dame"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Soudure du support du capteur du moule"
+      ],
+      [
+        46040,
+        "1 h 40 min ",
+        null,
+        "Changement de moule"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Soudure du vérin de dame"
+      ]
+    ],
+    "semaine 3": [
+      [
+        "Etat des arrêts avec les Temps de semaine"
+      ],
+      [],
+      [
+        "Date",
+        "Temps d’arrêt total",
+        null,
+        "Causes des arrêts",
+        null,
+        null,
+        null,
+        null,
+        "Totaux par semaine (19/01 → 25/01) :"
+      ],
+      [
+        46041,
+        "4 h 50 min ",
+        null,
+        "Montage du moule et coincement du skip",
+        null,
+        null,
+        null,
+        null,
+        "Total  (19/01 →25/01) :  → 18 h 50 min"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Nettoyage du malaxeur de la centrale"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Réparation suite au coincement du skip"
+      ],
+      [
+        46042,
+        "2 h 35 min ",
+        null,
+        "Écrasement du cardan du vibreur"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Montage du cardan du vibreur et changement de moule"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Soudure de l’axe du vérin de dame"
+      ],
+      [
+        46043,
+        "1 h 35 min ",
+        null,
+        "Changement de moule et essais du nouveau matériau 0/6"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Changement du distributeur de la trémie 3/6 (Hamdi)"
+      ],
+      [
+        46044,
+        "1 h 30 min",
+        null,
+        "Problème au basculeur de ciment (problème d’air)"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Nettoyage du malaxeur"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Changement de moule"
+      ],
+      [
+        46045,
+        "5 h 40 min",
+        null,
+        "Changement de moule (répété deux fois)"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Manque de ciment"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Changement de vérin de dame"
+      ],
+      [
+        46046,
+        "1 h 30 min ",
+        null,
+        "Retard de l’opérateur de presse (panne de son moyen de transport)"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Nettoyage du malaxeur (répété deux fois)"
+      ],
+      [
+        46047,
+        "1 h 10 min",
+        null,
+        "Montage de moule 16"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Réglage de la courroie du vibreur de presse"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Nettoyage du skip"
+      ],
+      [],
+      [],
+      [],
+      [],
+      [],
+      [],
+      [],
+      [],
+      [],
+      [],
+      [],
+      [],
+      [],
+      [],
+      []
+    ],
+    "semaine 4": [
+      [
+        "Etat des arrêts avec les Temps de semaine"
+      ],
+      [],
+      [
+        "Date",
+        "Temps d’arrêt total",
+        null,
+        "Causes des arrêts",
+        null,
+        null,
+        null,
+        null,
+        "Totaux par semaine (26/01 → 31/01) :"
+      ],
+      [
+        46048,
+        "1 h 15 min ",
+        null,
+        "Nettoyage du malaxeur (répété deux fois)",
+        null,
+        null,
+        null,
+        null,
+        "Total  (26/01 → 31/01) : → 8 h 55 min"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Changement de moule"
+      ],
+      [
+        46049,
+        "50 min",
+        null,
+        "Nettoyage du malaxeur"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Changement de moule"
+      ],
+      [
+        46050,
+        "1 h 05 min ",
+        null,
+        "Nettoyage du malaxeur (répété deux fois)"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Changement des boulons de la dame"
+      ],
+      [
+        46051,
+        "2 h 25 min ",
+        null,
+        "Changement de moule (répété deux fois – introducteur en panne)"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Essai d’une nouvelle formule (perte de temps)"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Panne fermeture bascule d’eau"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Nettoyage du malaxeur (répété deux fois)"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Soudure de fixation du vérin de tiroir"
+      ],
+      [
+        46052,
+        "1 h 55 min",
+        null,
+        "Réglage de moule"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Nettoyage du malaxeur"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Problème au compresseur d’air"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Écrasement de l’axe du vérin du tiroir"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Nettoyage de moule"
+      ],
+      [
+        46053,
+        "1 h 25 min ",
+        null,
+        "Réglage du capteur d’extracteur"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Nettoyage du malaxeur (répété deux fois)"
+      ],
+      [
+        null,
+        null,
+        null,
+        "Changement de moule"
+      ]
+    ]
+  }
+}

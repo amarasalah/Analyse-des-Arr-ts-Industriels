@@ -1,0 +1,1230 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📊 Tableau de Bord — Analyse des Arrêts Industriels</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box
+        }
+
+        :root {
+            --bg: #070b14;
+            --surface: rgba(15, 23, 42, 0.85);
+            --surface2: rgba(30, 41, 59, 0.7);
+            --surface3: #0d1322;
+            --primary: #818cf8;
+            --primary2: #6366f1;
+            --secondary: #c084fc;
+            --tertiary: #22d3ee;
+            --accent-green: #34d399;
+            --accent-orange: #fb923c;
+            --accent-red: #f87171;
+            --accent-pink: #f472b6;
+            --accent-yellow: #fbbf24;
+            --text: #f1f5f9;
+            --text2: #94a3b8;
+            --text3: #64748b;
+            --glass: rgba(255, 255, 255, 0.03);
+            --glass2: rgba(255, 255, 255, 0.06);
+            --glass-border: rgba(255, 255, 255, 0.07);
+            --glow: 0 0 60px rgba(99, 102, 241, 0.12), 0 0 120px rgba(139, 92, 246, 0.06);
+            --glow2: 0 4px 30px rgba(0, 0, 0, 0.4);
+            --radius: 20px;
+            --radius-sm: 12px;
+        }
+
+        html {
+            scroll-behavior: smooth
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden
+        }
+
+        /* Animated BG */
+        .bg-effects {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+            overflow: hidden
+        }
+
+        .bg-effects .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: .35;
+            animation: float 20s ease-in-out infinite
+        }
+
+        .bg-effects .orb:nth-child(1) {
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(99, 102, 241, .3), transparent 70%);
+            top: -10%;
+            left: -5%;
+            animation-delay: 0s
+        }
+
+        .bg-effects .orb:nth-child(2) {
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(139, 92, 246, .25), transparent 70%);
+            bottom: -10%;
+            right: -5%;
+            animation-delay: -7s
+        }
+
+        .bg-effects .orb:nth-child(3) {
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(34, 211, 238, .2), transparent 70%);
+            top: 40%;
+            left: 50%;
+            animation-delay: -14s
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translate(0, 0) scale(1)
+            }
+
+            33% {
+                transform: translate(30px, -40px) scale(1.05)
+            }
+
+            66% {
+                transform: translate(-20px, 30px) scale(.95)
+            }
+        }
+
+        .container {
+            max-width: 1440px;
+            margin: 0 auto;
+            padding: 20px 28px;
+            position: relative;
+            z-index: 1
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            padding: 48px 0 36px;
+            position: relative
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, #818cf8 0%, #c084fc 40%, #22d3ee 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -1.5px;
+            margin-bottom: 10px;
+            line-height: 1.1
+        }
+
+        .header p {
+            color: var(--text2);
+            font-size: 1.05rem;
+            font-weight: 300;
+            letter-spacing: .3px
+        }
+
+        .header .badges {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 16px;
+            flex-wrap: wrap
+        }
+
+        .header .badge {
+            padding: 7px 18px;
+            background: var(--glass2);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            font-size: .8rem;
+            font-weight: 500;
+            backdrop-filter: blur(10px)
+        }
+
+        .badge-cyan {
+            color: #22d3ee
+        }
+
+        .badge-purple {
+            color: #c084fc
+        }
+
+        .badge-green {
+            color: #34d399
+        }
+
+        /* Import Zone */
+        .import-zone {
+            margin: 20px 0 32px;
+            padding: 40px;
+            border: 2px dashed rgba(129, 140, 248, .25);
+            border-radius: var(--radius);
+            background: linear-gradient(135deg, rgba(99, 102, 241, .04), rgba(192, 132, 252, .03));
+            text-align: center;
+            transition: all .4s;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(8px)
+        }
+
+        .import-zone:hover {
+            border-color: var(--primary);
+            background: linear-gradient(135deg, rgba(99, 102, 241, .08), rgba(192, 132, 252, .06));
+            transform: translateY(-2px);
+            box-shadow: var(--glow)
+        }
+
+        .import-zone.drag-over {
+            border-color: #22d3ee;
+            background: rgba(34, 211, 238, .06)
+        }
+
+        .import-zone .icon {
+            font-size: 2.8rem;
+            margin-bottom: 12px;
+            filter: drop-shadow(0 0 20px rgba(99, 102, 241, .4))
+        }
+
+        .import-zone h3 {
+            color: var(--text);
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-bottom: 6px
+        }
+
+        .import-zone p {
+            color: var(--text3);
+            font-size: .88rem
+        }
+
+        .import-zone input {
+            display: none
+        }
+
+        /* File Tags */
+        .file-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            justify-content: center;
+            margin: 16px 0 24px
+        }
+
+        .file-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 7px 16px;
+            background: linear-gradient(135deg, rgba(129, 140, 248, .12), rgba(192, 132, 252, .08));
+            border: 1px solid rgba(129, 140, 248, .25);
+            border-radius: 24px;
+            font-size: .82rem;
+            color: var(--text);
+            font-weight: 500;
+            backdrop-filter: blur(8px);
+            transition: all .2s
+        }
+
+        .file-tag:hover {
+            border-color: var(--primary);
+            box-shadow: 0 0 20px rgba(99, 102, 241, .15)
+        }
+
+        .file-tag .remove {
+            cursor: pointer;
+            opacity: .4;
+            transition: all .2s;
+            font-size: .7rem;
+            margin-left: 4px
+        }
+
+        .file-tag .remove:hover {
+            opacity: 1;
+            color: var(--accent-red)
+        }
+
+        /* KPI Cards */
+        .kpi-row {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 16px;
+            margin-bottom: 28px
+        }
+
+        .kpi {
+            background: var(--surface);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius);
+            padding: 22px 20px;
+            position: relative;
+            overflow: hidden;
+            transition: all .3s;
+            backdrop-filter: blur(12px)
+        }
+
+        .kpi:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--glow)
+        }
+
+        .kpi::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px
+        }
+
+        .kpi:nth-child(1)::before {
+            background: linear-gradient(90deg, #818cf8, #6366f1)
+        }
+
+        .kpi:nth-child(2)::before {
+            background: linear-gradient(90deg, #22d3ee, #06b6d4)
+        }
+
+        .kpi:nth-child(3)::before {
+            background: linear-gradient(90deg, #34d399, #10b981)
+        }
+
+        .kpi:nth-child(4)::before {
+            background: linear-gradient(90deg, #c084fc, #a855f7)
+        }
+
+        .kpi:nth-child(5)::before {
+            background: linear-gradient(90deg, #fb923c, #f97316)
+        }
+
+        .kpi .kpi-icon {
+            font-size: 1.6rem;
+            margin-bottom: 6px
+        }
+
+        .kpi .kpi-value {
+            font-size: 2rem;
+            font-weight: 800;
+            letter-spacing: -1px;
+            line-height: 1.1
+        }
+
+        .kpi .kpi-label {
+            color: var(--text3);
+            font-size: .72rem;
+            font-weight: 600;
+            margin-top: 5px;
+            text-transform: uppercase;
+            letter-spacing: .8px
+        }
+
+        .kpi .kpi-sub {
+            color: var(--text2);
+            font-size: .75rem;
+            margin-top: 3px;
+            font-weight: 400
+        }
+
+        /* Section Title */
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 32px 0 18px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--glass-border)
+        }
+
+        .section-title h2 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            background: linear-gradient(90deg, var(--text), var(--text2));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent
+        }
+
+        .section-title .icon {
+            font-size: 1.4rem
+        }
+
+        /* Charts Grid */
+        .charts-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px;
+            margin-bottom: 28px
+        }
+
+        .chart-card {
+            background: var(--surface);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius);
+            padding: 24px;
+            position: relative;
+            backdrop-filter: blur(12px);
+            transition: all .3s
+        }
+
+        .chart-card:hover {
+            box-shadow: var(--glow2)
+        }
+
+        .chart-card.full {
+            grid-column: 1/-1
+        }
+
+        .chart-card.third {
+            grid-column: span 1
+        }
+
+        .chart-card h3 {
+            font-size: .95rem;
+            font-weight: 700;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text)
+        }
+
+        .chart-card h3 .ch-icon {
+            font-size: 1.2rem
+        }
+
+        .chart-card h3 .ch-sub {
+            font-size: .72rem;
+            color: var(--text3);
+            font-weight: 400;
+            margin-left: auto
+        }
+
+        .chart-wrap {
+            position: relative;
+            width: 100%;
+            min-height: 300px
+        }
+
+        .chart-wrap canvas {
+            width: 100% !important
+        }
+
+        /* Three col grid */
+        .charts-grid-3 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 18px;
+            margin-bottom: 28px
+        }
+
+        /* Stats Table */
+        .stats-table-wrap {
+            background: var(--surface);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius);
+            padding: 24px;
+            margin-bottom: 28px;
+            overflow-x: auto;
+            backdrop-filter: blur(12px)
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse
+        }
+
+        th {
+            text-align: left;
+            padding: 12px 14px;
+            font-size: .7rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text3);
+            border-bottom: 1px solid var(--glass-border);
+            font-weight: 700
+        }
+
+        td {
+            padding: 11px 14px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.025);
+            font-size: .85rem;
+            transition: background .15s
+        }
+
+        tr:hover td {
+            background: rgba(129, 140, 248, 0.04)
+        }
+
+        .cat-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 12px;
+            border-radius: 16px;
+            font-size: .78rem;
+            font-weight: 600
+        }
+
+        .cat-dot {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            flex-shrink: 0
+        }
+
+        .pct-bar {
+            height: 6px;
+            border-radius: 3px;
+            background: rgba(255, 255, 255, .04);
+            overflow: hidden;
+            min-width: 100px
+        }
+
+        .pct-bar-fill {
+            height: 100%;
+            border-radius: 3px;
+            transition: width 1s cubic-bezier(.4, 0, .2, 1)
+        }
+
+        .pct-value {
+            font-weight: 800;
+            font-variant-numeric: tabular-nums;
+            font-size: .88rem
+        }
+
+        .trend-up {
+            color: #34d399
+        }
+
+        .trend-down {
+            color: #f87171
+        }
+
+        .trend-flat {
+            color: #94a3b8
+        }
+
+        /* Filters */
+        .filters-panel {
+            background: var(--surface);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius);
+            padding: 20px 24px;
+            margin-bottom: 20px;
+            backdrop-filter: blur(12px)
+        }
+
+        .filters-panel h3 {
+            font-size: .9rem;
+            font-weight: 700;
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px
+        }
+
+        .filter-group {
+            margin-bottom: 14px
+        }
+
+        .filter-group-label {
+            font-size: .72rem;
+            text-transform: uppercase;
+            letter-spacing: .8px;
+            color: var(--text3);
+            font-weight: 700;
+            margin-bottom: 8px
+        }
+
+        .filter-row {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap
+        }
+
+        .filter-btn {
+            padding: 6px 16px;
+            border-radius: 20px;
+            border: 1px solid var(--glass-border);
+            background: var(--glass);
+            color: var(--text2);
+            font-size: .78rem;
+            cursor: pointer;
+            transition: all .25s;
+            font-family: inherit;
+            font-weight: 500
+        }
+
+        .filter-btn:hover {
+            border-color: rgba(129, 140, 248, .4);
+            color: var(--text);
+            background: rgba(129, 140, 248, .08)
+        }
+
+        .filter-btn.active {
+            background: linear-gradient(135deg, #6366f1, #818cf8);
+            color: #fff;
+            border-color: transparent;
+            box-shadow: 0 4px 15px rgba(99, 102, 241, .3)
+        }
+
+        .filter-btn.active-cyan {
+            background: linear-gradient(135deg, #06b6d4, #22d3ee);
+            box-shadow: 0 4px 15px rgba(6, 182, 212, .3)
+        }
+
+        .filter-btn.active-green {
+            background: linear-gradient(135deg, #059669, #34d399);
+            box-shadow: 0 4px 15px rgba(16, 185, 129, .3)
+        }
+
+        .filter-btn.active-purple {
+            background: linear-gradient(135deg, #7c3aed, #c084fc);
+            box-shadow: 0 4px 15px rgba(139, 92, 246, .3)
+        }
+
+        /* Detail List */
+        .detail-section {
+            background: var(--surface);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius);
+            padding: 24px;
+            margin-bottom: 28px;
+            backdrop-filter: blur(12px)
+        }
+
+        .cause-list {
+            max-height: 480px;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(99, 102, 241, .3) transparent
+        }
+
+        .cause-item {
+            display: grid;
+            grid-template-columns: 90px 1fr auto auto;
+            align-items: center;
+            gap: 14px;
+            padding: 11px 14px;
+            border-radius: var(--radius-sm);
+            transition: all .2s;
+            border-left: 3px solid transparent;
+            margin-bottom: 2px
+        }
+
+        .cause-item:hover {
+            background: rgba(129, 140, 248, .04);
+            border-left-color: var(--primary);
+            transform: translateX(4px)
+        }
+
+        .cause-item .ci-cat {
+            font-size: .68rem;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-weight: 600;
+            white-space: nowrap;
+            text-align: center
+        }
+
+        .cause-item .ci-cause {
+            font-size: .84rem;
+            line-height: 1.4
+        }
+
+        .cause-item .ci-date {
+            color: var(--text3);
+            font-size: .76rem;
+            font-variant-numeric: tabular-nums;
+            font-weight: 500
+        }
+
+        .cause-item .ci-file {
+            color: var(--tertiary);
+            font-size: .72rem;
+            font-weight: 600
+        }
+
+        .cause-count {
+            text-align: center;
+            padding: 10px;
+            color: var(--text3);
+            font-size: .8rem;
+            border-top: 1px solid var(--glass-border);
+            margin-top: 6px
+        }
+
+        /* Mini Stat Cards */
+        .mini-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 14px;
+            margin-bottom: 28px
+        }
+
+        .mini-stat {
+            background: var(--surface);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius);
+            padding: 20px;
+            backdrop-filter: blur(12px);
+            transition: all .3s
+        }
+
+        .mini-stat:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--glow2)
+        }
+
+        .mini-stat .ms-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px
+        }
+
+        .mini-stat .ms-title {
+            font-size: .78rem;
+            font-weight: 700;
+            color: var(--text2);
+            text-transform: uppercase;
+            letter-spacing: .5px
+        }
+
+        .mini-stat .ms-icon {
+            font-size: 1.4rem
+        }
+
+        .mini-stat .ms-value {
+            font-size: 1.8rem;
+            font-weight: 800;
+            letter-spacing: -1px;
+            margin-bottom: 4px
+        }
+
+        .mini-stat .ms-desc {
+            font-size: .76rem;
+            color: var(--text3)
+        }
+
+        .mini-stat .ms-bar {
+            height: 4px;
+            border-radius: 2px;
+            background: rgba(255, 255, 255, .04);
+            margin-top: 10px;
+            overflow: hidden
+        }
+
+        .mini-stat .ms-bar-fill {
+            height: 100%;
+            border-radius: 2px
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 36px 0;
+            color: var(--text3);
+            font-size: .78rem;
+            border-top: 1px solid var(--glass-border);
+            margin-top: 20px
+        }
+
+        .footer a {
+            color: var(--primary);
+            text-decoration: none
+        }
+
+        /* Animations */
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(24px)
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0)
+            }
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-16px)
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0)
+            }
+        }
+
+        .animate {
+            animation: fadeUp .6s cubic-bezier(.16, 1, .3, 1) forwards;
+            opacity: 0
+        }
+
+        .animate-d1 {
+            animation-delay: .05s
+        }
+
+        .animate-d2 {
+            animation-delay: .1s
+        }
+
+        .animate-d3 {
+            animation-delay: .15s
+        }
+
+        .animate-d4 {
+            animation-delay: .2s
+        }
+
+        /* Responsive */
+        @media(max-width:1100px) {
+            .kpi-row {
+                grid-template-columns: repeat(3, 1fr)
+            }
+
+            .charts-grid-3 {
+                grid-template-columns: 1fr 1fr
+            }
+        }
+
+        @media(max-width:768px) {
+            .header h1 {
+                font-size: 2rem
+            }
+
+            .charts-grid,
+            .charts-grid-3 {
+                grid-template-columns: 1fr
+            }
+
+            .kpi-row {
+                grid-template-columns: 1fr 1fr
+            }
+
+            .mini-stats {
+                grid-template-columns: 1fr
+            }
+
+            .kpi .kpi-value {
+                font-size: 1.5rem
+            }
+
+            .cause-item {
+                grid-template-columns: 1fr;
+                gap: 6px
+            }
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 5px
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(99, 102, 241, .3);
+            border-radius: 3px
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(99, 102, 241, .5)
+        }
+    </style>
+</head>
+
+<body>
+    <div class="bg-effects">
+        <div class="orb"></div>
+        <div class="orb"></div>
+        <div class="orb"></div>
+    </div>
+
+    <div class="container">
+        <div class="header animate">
+            <h1>🏭 Analyse des Arrêts Industriels</h1>
+            <p>Tableau de bord interactif — Statistiques avancées & pourcentages par phénomène</p>
+            <div class="badges" id="headerBadges"></div>
+        </div>
+
+        <div class="import-zone animate animate-d1" id="importZone">
+            <div class="icon">📁</div>
+            <h3>Importer des fichiers Excel (.xlsx)</h3>
+            <p>Glissez-déposez vos fichiers ici ou <strong>cliquez pour parcourir</strong> — L'analyse se met à jour
+                automatiquement</p>
+            <input type="file" id="fileInput" accept=".xlsx,.xls" multiple>
+        </div>
+        <div class="file-tags" id="fileTags"></div>
+
+        <div class="kpi-row" id="kpiRow"></div>
+
+        <div class="mini-stats" id="miniStats"></div>
+
+        <div class="section-title"><span class="icon">📊</span>
+            <h2>Visualisation des Données</h2>
+        </div>
+        <div class="charts-grid">
+            <div class="chart-card animate">
+                <h3><span class="ch-icon">🍩</span>Répartition par catégorie<span class="ch-sub">% d'occurrences</span>
+                </h3>
+                <div class="chart-wrap"><canvas id="doughnutChart"></canvas></div>
+            </div>
+            <div class="chart-card animate">
+                <h3><span class="ch-icon">📊</span>Top 10 catégories<span class="ch-sub">Nombre d'événements</span></h3>
+                <div class="chart-wrap"><canvas id="barChart"></canvas></div>
+            </div>
+        </div>
+        <div class="charts-grid">
+            <div class="chart-card animate">
+                <h3><span class="ch-icon">📈</span>Comparaison mensuelle<span class="ch-sub">Radar multi-fichiers</span>
+                </h3>
+                <div class="chart-wrap"><canvas id="radarChart"></canvas></div>
+            </div>
+            <div class="chart-card animate">
+                <h3><span class="ch-icon">🌀</span>Distribution polaire<span class="ch-sub">Aire par catégorie</span>
+                </h3>
+                <div class="chart-wrap"><canvas id="polarChart"></canvas></div>
+            </div>
+        </div>
+        <div class="charts-grid">
+            <div class="chart-card full animate">
+                <h3><span class="ch-icon">📅</span>Évolution journalière des arrêts<span class="ch-sub">Temps d'arrêt
+                        par jour (minutes)</span></h3>
+                <div class="chart-wrap" style="min-height:280px"><canvas id="timelineChart"></canvas></div>
+            </div>
+        </div>
+        <div class="charts-grid">
+            <div class="chart-card full animate">
+                <h3><span class="ch-icon">📦</span>Répartition par semaine et par catégorie<span class="ch-sub">Vue
+                        empilée</span></h3>
+                <div class="chart-wrap" style="min-height:300px"><canvas id="stackedChart"></canvas></div>
+            </div>
+        </div>
+
+        <div class="section-title"><span class="icon">📋</span>
+            <h2>Statistiques Détaillées par Phénomène</h2>
+        </div>
+        <div class="stats-table-wrap animate">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Catégorie</th>
+                        <th>Occurrences</th>
+                        <th>%</th>
+                        <th>Répartition</th>
+                        <th>Moy/Jour</th>
+                        <th>Tendance</th>
+                    </tr>
+                </thead>
+                <tbody id="statsBody"></tbody>
+            </table>
+        </div>
+
+        <div class="section-title"><span class="icon">🔍</span>
+            <h2>Explorateur de Causes</h2>
+        </div>
+        <div class="filters-panel animate">
+            <h3>🎛️ Filtres avancés</h3>
+            <div class="filter-group">
+                <div class="filter-group-label">📁 Par fichier (mois)</div>
+                <div class="filter-row" id="filterFiles"></div>
+            </div>
+            <div class="filter-group">
+                <div class="filter-group-label">📅 Par semaine</div>
+                <div class="filter-row" id="filterWeeks"></div>
+            </div>
+            <div class="filter-group">
+                <div class="filter-group-label">🏷️ Par catégorie</div>
+                <div class="filter-row" id="filterCats"></div>
+            </div>
+        </div>
+        <div class="detail-section animate">
+            <div class="cause-list" id="causeList"></div>
+            <div class="cause-count" id="causeCount"></div>
+        </div>
+
+        <div class="footer">Créé automatiquement — Analyse des fichiers Excel d'arrêts industriels<br><span
+                style="opacity:.5">Glissez un nouveau fichier .xlsx pour enrichir l'analyse</span></div>
+    </div>
+
+    <script>
+        const COLORS = ['#818cf8', '#22d3ee', '#34d399', '#fbbf24', '#f87171', '#c084fc', '#f472b6', '#2dd4bf', '#fb923c', '#a3e635', '#a78bfa', '#67e8f9', '#fdba74', '#86efac', '#f9a8d4', '#38bdf8'];
+        const CAT_COLORS = { 'Changement/Montage Moule': '#818cf8', 'Nettoyage Malaxeur': '#22d3ee', 'Vérin/Dame': '#f87171', 'Chaîne/Extracteur/Ascenseur': '#34d399', 'Réglage/Maintenance Moule': '#c084fc', 'Bascule/Trémie/Hydraulique': '#fbbf24', 'Électrique/Capteur/Logiciel': '#f472b6', 'Tiroir': '#2dd4bf', 'Problème Air/Compresseur': '#fb923c', 'Vibreur/Presse': '#a3e635', 'Coincement/Blocage Planche': '#a78bfa', 'Soudure': '#67e8f9', 'Pannes Diverses': '#fdba74', 'Nettoyage Général': '#86efac', 'Changement Flexible': '#f9a8d4', 'Autres': '#38bdf8' };
+
+        let allData = [], filesLoaded = [];
+        let activeFilters = { file: 'all', week: 'all', cat: 'all' };
+
+        function categorize(cause) {
+            const c = cause.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+            if (c.includes('moule') && (c.includes('changement') || c.includes('montage') || c.includes('demontage'))) return 'Changement/Montage Moule';
+            if (c.includes('moule') && (c.includes('soudure') || c.includes('reglage') || c.includes('serrage') || c.includes('nettoyage') || c.includes('dressage'))) return 'Réglage/Maintenance Moule';
+            if (c.includes('malaxeur') || c.includes('nettoyage') && c.includes('lavage')) return 'Nettoyage Malaxeur';
+            if (c.includes('nettoyage')) return 'Nettoyage Général';
+            if (c.includes('verin') || c.includes('dame')) return 'Vérin/Dame';
+            if (c.includes('tiroir')) return 'Tiroir';
+            if (c.includes('compresseur') || c.includes('air')) return 'Problème Air/Compresseur';
+            if (c.includes('chaine') || c.includes('extracteur') || c.includes('ascenseur')) return 'Chaîne/Extracteur/Ascenseur';
+            if (c.includes('soudure')) return 'Soudure';
+            if (c.includes('capteur') || c.includes('logiciel') || c.includes('electrique') || c.includes('armoire') || c.includes('variateur')) return 'Électrique/Capteur/Logiciel';
+            if (c.includes('vibreur') || c.includes('courroie') || c.includes('cardan') || c.includes('presse')) return 'Vibreur/Presse';
+            if (c.includes('bascule') || c.includes('tremie') || c.includes('skip') || c.includes('hydraulique')) return 'Bascule/Trémie/Hydraulique';
+            if (c.includes('coincement') || c.includes('planche') || c.includes('blocage')) return 'Coincement/Blocage Planche';
+            if (c.includes('flexible')) return 'Changement Flexible';
+            if (c.includes('panne') || c.includes('reparation') || c.includes('probleme')) return 'Pannes Diverses';
+            return 'Autres';
+        }
+        function parseTime(str) { if (!str || typeof str !== 'string') return 0; let m = 0; const h = str.match(/(\d+)\s*h/i), mi = str.match(/(\d+)\s*min/i); if (h) m += parseInt(h[1]) * 60; if (mi) m += parseInt(mi[1]); if (!h && !mi) { const hh = str.match(/(\d+)\s*heures/i); if (hh) m = parseInt(hh[1]) * 60 } return m }
+
+        function parseExcelData(wb, fname) {
+            const ev = [];
+            wb.SheetNames.forEach(sn => {
+                const d = XLSX.utils.sheet_to_json(wb.Sheets[sn], { header: 1 }); let cd = null, ct = null;
+                d.forEach(r => {
+                    if (r[0] && typeof r[0] === 'number' && r[0] > 40000) { const dt = new Date((r[0] - 25569) * 864e5); cd = dt.toISOString().split('T')[0]; ct = r[1] ? String(r[1]).trim() : null }
+                    const ca = r[3] ? String(r[3]).trim() : null;
+                    if (ca && !ca.startsWith('Causes') && ca.length > 3 && !ca.startsWith('Démarrage') && !ca.toLowerCase().includes('pause') && !ca.toLowerCase().includes('retard')) {
+                        ev.push({ file: fname, sheet: sn, date: cd, time: ct, timeMinutes: parseTime(ct), cause: ca, category: categorize(ca) })
+                    }
+                });
+            });
+            return ev;
+        }
+
+        const PRELOADED = [{"file":"fÃ©️vrier","sheet":"semaine 1","date":"2026-02-01","time":"1 h 20 min","timeMinutes":80,"cause":"Changement du moule 12 vers 16","category":"Changement/Montage Moule"},{"file":"fÃ©️vrier","sheet":"semaine 1","date":"2026-02-01","time":"1 h 20 min","timeMinutes":80,"cause":"Démontage du moule 16 et montage du moule 20","category":"Changement/Montage Moule"},{"file":"fÃ©️vrier","sheet":"semaine 1","date":"2026-02-01","time":"1 h 20 min","timeMinutes":80,"cause":"Nettoyage du malaxeur","category":"Nettoyage Malaxeur"},{"file":"fÃ©️vrier","sheet":"semaine 1","date":"2026-02-02","time":"50 min","timeMinutes":50,"cause":"Serrage et réglage du moule 16","category":"Réglage/Maintenance Moule"},{"file":"fÃ©️vrier","sheet":"semaine 1","date":"2026-02-02","time":"50 min","timeMinutes":50,"cause":"Nettoyage du malaxeur (répété 2 fois)","category":"Nettoyage Malaxeur"},{"file":"fÃ©️vrier","sheet":"semaine 1","date":"2026-02-03","time":"2h 25 min","timeMinutes":145,"cause":"Changement de moule (16 fermé → 16)","category":"Changement/Montage Moule"},{"file":"fÃ©️vrier","sheet":"semaine 1","date":"2026-02-03","time":"2h 25 min","timeMinutes":145,"cause":"Nettoyage du malaxeur (répété 2 fois)","category":"Nettoyage Malaxeur"},{"file":"fÃ©️vrier","sheet":"semaine 1","date":"2026-02-03","time":"2h 25 min","timeMinutes":145,"cause":"Panne au niveau de la bascule d’eau","category":"Bascule/Trémie/Hydraulique"},{"file":"fÃ©️vrier","sheet":"semaine 1","date":"2026-02-03","time":"2h 25 min","timeMinutes":145,"cause":"Réglage de la bascule d’eau","category":"Bascule/Trémie/Hydraulique"},{"file":"fÃ©️vrier","sheet":"semaine 1","date":"2026-02-03","time":"2h 25 min","timeMinutes":145,"cause":"Réglage du capteur d’ascenseur","category":"Chaîne/Extracteur/Ascenseur"},{"file":"fÃ©️vrier","sheet":"semaine 1","date":"2026-02-04","time":"4h","timeMinutes":240,"cause":"Réparation de la bascule d’eau","category":"Bascule/Trémie/Hydraulique"},{"file":"fÃ©️vrier","sheet":"semaine 1","date":"2026-02-04","time":"4h","timeMinutes":240,"cause":"Nettoyage du malaxeur (répété 1 fois )","category":"Nettoyage Malaxeur"},{"file":"fÃ©️vrier","sheet":"semaine 1","date":"2026-02-04","time":"4h","timeMinutes":240,"cause":"Chargement gasoil pour Fenwick n°08","category":"Autres"},{"file":"fÃ©️vrier","sheet":"semaine 1","date":"2026-02-04","time":"4h","timeMinutes":240,"cause":"Changement de moule (16 fermé → 16)","category":"Changement/Montage Moule"},{"file":"fÃ©️vrier","sheet":"semaine 1","date":"2026-02-04","time":"4h","timeMinutes":240,"cause":"coincement de la porte de la trémie sable 0/4","category":"Bascule/Trémie/Hydraulique"},{"file":"fÃ©️vrier","sheet":"semaine 1","date":"2026-02-05","time":"2h 45 min","timeMinutes":165,"cause":"Problème au niveau du logiciel de centrale","category":"Électrique/Capteur/Logiciel"},{"file":"fÃ©️vrier","sheet":"semaine 1","date":"2026-02-05","time":"2h 45 min","timeMinutes":165,"cause":"Nettoyage du malaxeur (répété 2 fois)","category":"Nettoyage Malaxeur"},{"file":"fÃ©️vrier","sheet":"semaine 1","date":"2026-02-05","time":"2h 45 min","timeMinutes":165,"cause":"Problème d’air (compresseur)","category":"Problème Air/Compresseur"},{"file":"fÃ©️vrier","sheet":"semaine 1","date":"2026-02-06","time":"1h 20 min","timeMinutes":80,"cause":"Serrage et réglage du moule","category":"Réglage/Maintenance Moule"},{"file":"fÃ©️vrier","sheet":"semaine 1","date":"2026-02-06","time":"1h 20 min","timeMinutes":80,"cause":"Nettoyage du malaxeur (répété 2 fois)","category":"Nettoyage Malaxeur"},{"file":"fÃ©️vrier","sheet":"semaine 1","date":"2026-02-06","time":"1h 20 min","timeMinutes":80,"cause":"Réglage du capteur d’ascenseur","category":"Chaîne/Extracteur/Ascenseur"},{"file":"fÃ©️vrier","sheet":"semaine 1","date":"2026-02-07","time":"2h 45 min","timeMinutes":165,"cause":"Serrage et réglage du moule","category":"Réglage/Maintenance Moule"},{"file":"fÃ©️vrier","sheet":"semaine 1","date":"2026-02-07","time":"2h 45 min","timeMinutes":165,"cause":"Soudure du vérin de tiroir","category":"Vérin/Dame"},{"file":"fÃ©️vrier","sheet":"semaine 1","date":"2026-02-07","time":"2h 45 min","timeMinutes":165,"cause":"Montage du support du capteur de moule","category":"Changement/Montage Moule"},{"file":"fÃ©️vrier","sheet":"semaine 1","date":"2026-02-07","time":"2h 45 min","timeMinutes":165,"cause":"Chargement de gasoil pour Fenwick n°08","category":"Autres"},{"file":"fÃ©️vrier","sheet":"semaine 1","date":"2026-02-07","time":"2h 45 min","timeMinutes":165,"cause":"Nettoyage du malaxeur (répété 2 fois)","category":"Nettoyage Malaxeur"},{"file":"fÃ©️vrier","sheet":"semaine 1","date":"2026-02-07","time":"2h 45 min","timeMinutes":165,"cause":"Changement du flexible de tiroir","category":"Tiroir"},{"file":"fÃ©️vrier","sheet":"semaine 1","date":"2026-02-07","time":"2h 45 min","timeMinutes":165,"cause":"Réglage du capteur avant du rouleau planche","category":"Électrique/Capteur/Logiciel"},{"file":"fÃ©️vrier","sheet":"semaine 1","date":"2026-02-08","time":"1h 10 min","timeMinutes":70,"cause":"changement de moule [ panne au niveau l'introducteur de moule ]","category":"Changement/Montage Moule"},{"file":"fÃ©️vrier","sheet":"semaine 2","date":"2026-02-09","time":"1h 55 min","timeMinutes":115,"cause":"Changement de moule","category":"Changement/Montage Moule"},{"file":"fÃ©️vrier","sheet":"semaine 2","date":"2026-02-09","time":"1h 55 min","timeMinutes":115,"cause":"Nettoyage du malaxeur (répété 2 fois )","category":"Nettoyage Malaxeur"},{"file":"fÃ©️vrier","sheet":"semaine 2","date":"2026-02-09","time":"1h 55 min","timeMinutes":115,"cause":"Coincement de la chaîne d’extraction des planches","category":"Chaîne/Extracteur/Ascenseur"},{"file":"fÃ©️vrier","sheet":"semaine 2","date":"2026-02-10","time":"2h 25 min","timeMinutes":145,"cause":"Réparation du vibreur de la presse","category":"Vibreur/Presse"},{"file":"fÃ©️vrier","sheet":"semaine 2","date":"2026-02-10","time":"2h 25 min","timeMinutes":145,"cause":"Problème au niveau du logiciel de la centrale","category":"Électrique/Capteur/Logiciel"},{"file":"fÃ©️vrier","sheet":"semaine 2","date":"2026-02-10","time":"2h 25 min","timeMinutes":145,"cause":"Nettoyage du malaxeur (répété 2 fois )","category":"Nettoyage Malaxeur"},{"file":"fÃ©️vrier","sheet":"semaine 2","date":"2026-02-10","time":"2h 25 min","timeMinutes":145,"cause":"Problème d’air au niveau de la presse","category":"Problème Air/Compresseur"},{"file":"fÃ©️vrier","sheet":"semaine 2","date":"2026-02-10","time":"2h 25 min","timeMinutes":145,"cause":"Changement et serrage de deux boulons de la dame de presse","category":"Vérin/Dame"},{"file":"fÃ©️vrier","sheet":"semaine 2","date":"2026-02-11","time":"1h 25 min","timeMinutes":85,"cause":"Nettoyage du malaxeur (répété 2 fois )","category":"Nettoyage Malaxeur"},{"file":"fÃ©️vrier","sheet":"semaine 2","date":"2026-02-11","time":"1h 25 min","timeMinutes":85,"cause":"Soudure du bras de la table de presse","category":"Soudure"},{"file":"fÃ©️vrier","sheet":"semaine 2","date":"2026-02-11","time":"1h 25 min","timeMinutes":85,"cause":"Coincement de planche au niveau de l’ascenseur","category":"Chaîne/Extracteur/Ascenseur"},{"file":"fÃ©️vrier","sheet":"semaine 2","date":"2026-02-12","time":"2h 15 min","timeMinutes":135,"cause":"Montage et réglage du moule","category":"Changement/Montage Moule"},{"file":"fÃ©️vrier","sheet":"semaine 2","date":"2026-02-12","time":"2h 15 min","timeMinutes":135,"cause":"Problème au niveau du logiciel","category":"Électrique/Capteur/Logiciel"},{"file":"fÃ©️vrier","sheet":"semaine 2","date":"2026-02-13","time":"5h 30 min","timeMinutes":330,"cause":"Réparation de la table de tiroir","category":"Tiroir"},{"file":"fÃ©️vrier","sheet":"semaine 2","date":"2026-02-13","time":"5h 30 min","timeMinutes":330,"cause":"Problème au niveau de la bascule d’eau","category":"Bascule/Trémie/Hydraulique"},{"file":"fÃ©️vrier","sheet":"semaine 2","date":"2026-02-13","time":"5h 30 min","timeMinutes":330,"cause":"Panne du moteur de la chaîne de presse","category":"Chaîne/Extracteur/Ascenseur"},{"file":"fÃ©️vrier","sheet":"semaine 2","date":"2026-02-13","time":"5h 30 min","timeMinutes":330,"cause":"Nettoyage du malaxeur","category":"Nettoyage Malaxeur"},{"file":"fÃ©️vrier","sheet":"semaine 2","date":"2026-02-14","time":"1h 35 min","timeMinutes":95,"cause":"Panne du compresseur d’air de la centrale","category":"Problème Air/Compresseur"},{"file":"fÃ©️vrier","sheet":"semaine 2","date":"2026-02-14","time":"1h 35 min","timeMinutes":95,"cause":"Coincement de planche au niveau de l’ascenseur","category":"Chaîne/Extracteur/Ascenseur"},{"file":"fÃ©️vrier","sheet":"semaine 2","date":"2026-02-14","time":"1h 35 min","timeMinutes":95,"cause":"Nettoyage du malaxeur","category":"Nettoyage Malaxeur"},{"file":"fÃ©️vrier","sheet":"semaine 2","date":"2026-02-15","time":"1h 53 min","timeMinutes":113,"cause":"Montage moule 12 + changement et fixation de soufflet de presse","category":"Changement/Montage Moule"},{"file":"fÃ©️vrier","sheet":"semaine 2","date":"2026-02-15","time":"1h 53 min","timeMinutes":113,"cause":"Réparation de chaîne","category":"Chaîne/Extracteur/Ascenseur"},{"file":"fÃ©️vrier","sheet":"semaine 2","date":"2026-02-15","time":"1h 53 min","timeMinutes":113,"cause":"Coincement de planche","category":"Coincement/Blocage Planche"},{"file":"fÃ©️vrier","sheet":"semaine 3","date":"2026-02-16","time":"50 min","timeMinutes":50,"cause":"Nettoyage du malaxeur (répété 2 fois )","category":"Nettoyage Malaxeur"},{"file":"fÃ©️vrier","sheet":"semaine 3","date":"2026-02-16","time":"50 min","timeMinutes":50,"cause":"Manque de Colonnes vides","category":"Autres"},{"file":"fÃ©️vrier","sheet":"semaine 3","date":"2026-02-17","time":"1h 10 min","timeMinutes":70,"cause":"Problème d’air au central","category":"Problème Air/Compresseur"},{"file":"fÃ©️vrier","sheet":"semaine 3","date":"2026-02-17","time":"1h 10 min","timeMinutes":70,"cause":"Nettoyage du malaxeur (répété 3 fois )","category":"Nettoyage Malaxeur"},{"file":"fÃ©️vrier","sheet":"semaine 3","date":"2026-02-17","time":"1h 10 min","timeMinutes":70,"cause":"Soudure et réglage support de capteur de moule côté cabine","category":"Réglage/Maintenance Moule"},{"file":"fÃ©️vrier","sheet":"semaine 3","date":"2026-02-18","time":"1h 30 min","timeMinutes":90,"cause":"Problème électrique au central","category":"Électrique/Capteur/Logiciel"},{"file":"fÃ©️vrier","sheet":"semaine 3","date":"2026-02-18","time":"1h 30 min","timeMinutes":90,"cause":"Nettoyage du malaxeur (répété 3 fois )","category":"Nettoyage Malaxeur"},{"file":"fÃ©️vrier","sheet":"semaine 3","date":"2026-02-18","time":"1h 30 min","timeMinutes":90,"cause":"Soudure et réglage du support de capteur de moule côté cabine répété","category":"Réglage/Maintenance Moule"},{"file":"fÃ©️vrier","sheet":"semaine 3","date":"2026-02-18","time":"1h 30 min","timeMinutes":90,"cause":"Déclenchement armoire de presse (vérification)","category":"Électrique/Capteur/Logiciel"},{"file":"fÃ©️vrier","sheet":"semaine 3","date":"2026-02-19","time":"6h 10 min","timeMinutes":370,"cause":"Écrasement de câble électrique","category":"Électrique/Capteur/Logiciel"},{"file":"fÃ©️vrier","sheet":"semaine 3","date":"2026-02-19","time":"6h 10 min","timeMinutes":370,"cause":"Panne du compresseur ( compresseur / air)","category":"Problème Air/Compresseur"},{"file":"fÃ©️vrier","sheet":"semaine 3","date":"2026-02-19","time":"6h 10 min","timeMinutes":370,"cause":"Changement de courroie de presse","category":"Vibreur/Presse"},{"file":"fÃ©️vrier","sheet":"semaine 3","date":"2026-02-19","time":"6h 10 min","timeMinutes":370,"cause":"Changement de moule","category":"Changement/Montage Moule"},{"file":"fÃ©️vrier","sheet":"semaine 3","date":"2026-02-19","time":"6h 10 min","timeMinutes":370,"cause":"Problème au niveau du logiciel","category":"Électrique/Capteur/Logiciel"},{"file":"fÃ©️vrier","sheet":"semaine 3","date":"2026-02-19","time":"6h 10 min","timeMinutes":370,"cause":"Réglage table de tiroir (coincement du moule avec la table)","category":"Réglage/Maintenance Moule"},{"file":"fÃ©️vrier","sheet":"semaine 3","date":"2026-02-19","time":"6h 10 min","timeMinutes":370,"cause":"Nettoyage du malaxeur","category":"Nettoyage Malaxeur"},{"file":"fÃ©️vrier","sheet":"semaine 3","date":"2026-02-20","time":"5h 45 min","timeMinutes":345,"cause":"Changement de moule","category":"Changement/Montage Moule"},{"file":"fÃ©️vrier","sheet":"semaine 3","date":"2026-02-20","time":"5h 45 min","timeMinutes":345,"cause":"Changement de vérin de dame","category":"Vérin/Dame"},{"file":"fÃ©️vrier","sheet":"semaine 3","date":"2026-02-20","time":"5h 45 min","timeMinutes":345,"cause":"Réparation du circuit d’air (problèmes d’air )","category":"Problème Air/Compresseur"},{"file":"fÃ©️vrier","sheet":"semaine 3","date":"2026-02-20","time":"5h 45 min","timeMinutes":345,"cause":"Réparation de la fixation du vérin de tiroir","category":"Vérin/Dame"},{"file":"fÃ©️vrier","sheet":"semaine 3","date":"2026-02-20","time":"5h 45 min","timeMinutes":345,"cause":"Intervention au niveau du circuit d’extracteur","category":"Chaîne/Extracteur/Ascenseur"},{"file":"fÃ©️vrier","sheet":"semaine 3","date":"2026-02-20","time":"5h 45 min","timeMinutes":345,"cause":"Soudure de l’axe du vérin de dame","category":"Vérin/Dame"},{"file":"fÃ©️vrier","sheet":"semaine 3","date":"2026-02-20","time":"5h 45 min","timeMinutes":345,"cause":"Serrage du plateau de dame","category":"Vérin/Dame"},{"file":"fÃ©️vrier","sheet":"semaine 3","date":"2026-02-21","time":"9heures","timeMinutes":540,"cause":"Changement de moule","category":"Changement/Montage Moule"},{"file":"fÃ©️vrier","sheet":"semaine 3","date":"2026-02-21","time":"9heures","timeMinutes":540,"cause":"Coincement de l’extracteur de planche","category":"Chaîne/Extracteur/Ascenseur"},{"file":"fÃ©️vrier","sheet":"semaine 3","date":"2026-02-21","time":"9heures","timeMinutes":540,"cause":"Montage et programmation du variateur d’extracteur","category":"Chaîne/Extracteur/Ascenseur"},{"file":"fÃ©️vrier","sheet":"semaine 3","date":"2026-02-21","time":"9heures","timeMinutes":540,"cause":"Défaut de synchronisation entre l’armoire et l’extracteur","category":"Chaîne/Extracteur/Ascenseur"},{"file":"fÃ©️vrier","sheet":"semaine 3","date":"2026-02-21","time":"9heures","timeMinutes":540,"cause":"Défaut de positionnement","category":"Autres"},{"file":"fÃ©️vrier","sheet":"semaine 3","date":"2026-02-21","time":"9heures","timeMinutes":540,"cause":"Défaut de vitesse","category":"Autres"},{"file":"fÃ©️vrier","sheet":"semaine 3","date":"2026-02-21","time":"9heures","timeMinutes":540,"cause":"Mouvements d’extracteur généralement instables","category":"Chaîne/Extracteur/Ascenseur"},{"file":"janvier (1)","sheet":"Semaine 1","date":"2026-01-02","time":"6 h 28 min","timeMinutes":388,"cause":"Soudure et montage du moule","category":"Changement/Montage Moule"},{"file":"janvier (1)","sheet":"Semaine 1","date":"2026-01-02","time":"6 h 28 min","timeMinutes":388,"cause":"Problème de tiroir","category":"Tiroir"},{"file":"janvier (1)","sheet":"Semaine 1","date":"2026-01-02","time":"6 h 28 min","timeMinutes":388,"cause":"Soudure d’un élément du tiroir","category":"Tiroir"},{"file":"janvier (1)","sheet":"Semaine 1","date":"2026-01-02","time":"6 h 28 min","timeMinutes":388,"cause":"Nettoyage du malaxeur","category":"Nettoyage Malaxeur"},{"file":"janvier (1)","sheet":"Semaine 1","date":"2026-01-02","time":"6 h 28 min","timeMinutes":388,"cause":"Réparation du tiroir de presse","category":"Tiroir"},{"file":"janvier (1)","sheet":"Semaine 1","date":"2026-01-02","time":"6 h 28 min","timeMinutes":388,"cause":"Soudure du réducteur du renverseur de planche","category":"Soudure"},{"file":"janvier (1)","sheet":"Semaine 1","date":"2026-01-02","time":"6 h 28 min","timeMinutes":388,"cause":"Coincement de planche","category":"Coincement/Blocage Planche"},{"file":"janvier (1)","sheet":"Semaine 1","date":"2026-01-02","time":"6 h 28 min","timeMinutes":388,"cause":"Changement de moule","category":"Changement/Montage Moule"},{"file":"janvier (1)","sheet":"Semaine 1","date":"2026-01-02","time":"6 h 28 min","timeMinutes":388,"cause":"Réparation de la fixation du vérin de dame","category":"Vérin/Dame"},{"file":"janvier (1)","sheet":"Semaine 1","date":"2026-01-02","time":"6 h 28 min","timeMinutes":388,"cause":"Montage du moteur de l’ascenseur","category":"Chaîne/Extracteur/Ascenseur"},{"file":"janvier (1)","sheet":"Semaine 1","date":"2026-01-03","time":"4 h 10 min","timeMinutes":250,"cause":"Nettoyage moule et malaxeur\r\n\r\nSoudure moule 16 et changement moule 20/16\r\n\r\nRéglage capteur presse\r\n\r\nNettoyage et lavage malaxeur\r\n\r\nDémarrage à 13h15\r\n\r\nRéglage de tiroir\r\n\r\nMontage capteur d’ascenseur\r\n\r\nSoudure bras d’extracteur\r\n\r\nSoudure moule\r\n\r\nNettoyage du malaxeur","category":"Changement/Montage Moule"},{"file":"janvier (1)","sheet":"Semaine 1","date":"2026-01-03","time":"4 h 10 min","timeMinutes":250,"cause":"Soudure moule 16 et changement moule 20/16","category":"Changement/Montage Moule"},{"file":"janvier (1)","sheet":"Semaine 1","date":"2026-01-03","time":"4 h 10 min","timeMinutes":250,"cause":"Réglage capteur presse","category":"Électrique/Capteur/Logiciel"},{"file":"janvier (1)","sheet":"Semaine 1","date":"2026-01-03","time":"4 h 10 min","timeMinutes":250,"cause":"Nettoyage et lavage malaxeur","category":"Nettoyage Malaxeur"},{"file":"janvier (1)","sheet":"Semaine 1","date":"2026-01-03","time":"4 h 10 min","timeMinutes":250,"cause":"Réglage de tiroir","category":"Tiroir"},{"file":"janvier (1)","sheet":"Semaine 1","date":"2026-01-03","time":"4 h 10 min","timeMinutes":250,"cause":"Montage capteur d’ascenseur","category":"Chaîne/Extracteur/Ascenseur"},{"file":"janvier (1)","sheet":"Semaine 1","date":"2026-01-03","time":"4 h 10 min","timeMinutes":250,"cause":"Soudure bras d’extracteur","category":"Chaîne/Extracteur/Ascenseur"},{"file":"janvier (1)","sheet":"Semaine 1","date":"2026-01-03","time":"4 h 10 min","timeMinutes":250,"cause":"Soudure moule","category":"Réglage/Maintenance Moule"},{"file":"janvier (1)","sheet":"Semaine 1","date":"2026-01-03","time":"4 h 10 min","timeMinutes":250,"cause":"Nettoyage du malaxeur","category":"Nettoyage Malaxeur"},{"file":"janvier (1)","sheet":"Semaine 1","date":"2026-01-04","time":"2 h 20 min","timeMinutes":140,"cause":"Montage moule 16","category":"Changement/Montage Moule"},{"file":"janvier (1)","sheet":"Semaine 1","date":"2026-01-04","time":"2 h 20 min","timeMinutes":140,"cause":"Changement de flexible de tiroir, nettoyage table vibrante, changement de moule","category":"Changement/Montage Moule"},{"file":"janvier (1)","sheet":"Semaine 1","date":"2026-01-04","time":"2 h 20 min","timeMinutes":140,"cause":"Coincement de planche","category":"Coincement/Blocage Planche"},{"file":"janvier (1)","sheet":"Semaine 1","date":"2026-01-05","time":"5 h 21 min","timeMinutes":321,"cause":"Nettoyage du moule et vérification","category":"Réglage/Maintenance Moule"},{"file":"janvier (1)","sheet":"Semaine 1","date":"2026-01-05","time":"5 h 21 min","timeMinutes":321,"cause":"Coincement de la chaîne escalier + changement du moule","category":"Changement/Montage Moule"},{"file":"janvier (1)","sheet":"Semaine 1","date":"2026-01-05","time":"5 h 21 min","timeMinutes":321,"cause":"Problème au niveau de la fixation du boulon du support dame","category":"Vérin/Dame"},{"file":"janvier (1)","sheet":"Semaine 1","date":"2026-01-05","time":"5 h 21 min","timeMinutes":321,"cause":"Nettoyage du malaxeur (répété deux fois)","category":"Nettoyage Malaxeur"},{"file":"janvier (1)","sheet":"Semaine 1","date":"2026-01-05","time":"5 h 21 min","timeMinutes":321,"cause":"Soudure de grille (répété deux fois)","category":"Soudure"},{"file":"janvier (1)","sheet":"Semaine 1","date":"2026-01-05","time":"5 h 21 min","timeMinutes":321,"cause":"Panne au niveau de la chaîne (répété deux fois)","category":"Chaîne/Extracteur/Ascenseur"},{"file":"janvier (1)","sheet":"Semaine 1","date":"2026-01-06","time":"5h","timeMinutes":300,"cause":"Soudure et montage du moule","category":"Changement/Montage Moule"},{"file":"janvier (1)","sheet":"Semaine 1","date":"2026-01-06","time":"5h","timeMinutes":300,"cause":"Soudure de l’axe du tiroir","category":"Tiroir"},{"file":"janvier (1)","sheet":"Semaine 1","date":"2026-01-06","time":"5h","timeMinutes":300,"cause":"Blocage des planches (répété deux fois)","category":"Coincement/Blocage Planche"},{"file":"janvier (1)","sheet":"Semaine 1","date":"2026-01-06","time":"5h","timeMinutes":300,"cause":"Réglage boulon fin de course + lavage du malaxeur","category":"Nettoyage Malaxeur"},{"file":"janvier (1)","sheet":"Semaine 1","date":"2026-01-06","time":"5h","timeMinutes":300,"cause":"Panne du flexible du compresseur + test de mélange","category":"Problème Air/Compresseur"},{"file":"janvier (1)","sheet":"Semaine 1","date":"2026-01-06","time":"5h","timeMinutes":300,"cause":"Changement de moule (","category":"Changement/Montage Moule"},{"file":"janvier (1)","sheet":"Semaine 1","date":"2026-01-06","time":"5h","timeMinutes":300,"cause":"Nettoyage du malaxeur (répété deux fois)","category":"Nettoyage Malaxeur"},{"file":"janvier (1)","sheet":"Semaine 1","date":"2026-01-06","time":"5h","timeMinutes":300,"cause":"Coincement de planche","category":"Coincement/Blocage Planche"},{"file":"janvier (1)","sheet":"Semaine 1","date":"2026-01-06","time":"5h","timeMinutes":300,"cause":"Soudure du fer plat du moule","category":"Réglage/Maintenance Moule"},{"file":"janvier (1)","sheet":"Semaine 1","date":"2026-01-07","time":"8 h 55 min","timeMinutes":535,"cause":"Soudure de la bague du tiroir + nettoyage du moule","category":"Réglage/Maintenance Moule"},{"file":"janvier (1)","sheet":"Semaine 1","date":"2026-01-07","time":"8 h 55 min","timeMinutes":535,"cause":"Changement du vérin du tiroir","category":"Vérin/Dame"},{"file":"janvier (1)","sheet":"Semaine 1","date":"2026-01-07","time":"8 h 55 min","timeMinutes":535,"cause":"Réparation du capteur du moule","category":"Électrique/Capteur/Logiciel"},{"file":"janvier (1)","sheet":"Semaine 1","date":"2026-01-07","time":"8 h 55 min","timeMinutes":535,"cause":"Changement du vibreur de dame + nettoyage du malaxeur","category":"Nettoyage Malaxeur"},{"file":"janvier (1)","sheet":"Semaine 1","date":"2026-01-07","time":"8 h 55 min","timeMinutes":535,"cause":"Coincement de chaîne (fuite de béton au tiroir) + réglage du racleur","category":"Tiroir"},{"file":"janvier (1)","sheet":"Semaine 1","date":"2026-01-07","time":"8 h 55 min","timeMinutes":535,"cause":"Coincement de chaîne","category":"Chaîne/Extracteur/Ascenseur"},{"file":"janvier (1)","sheet":"Semaine 1","date":"2026-01-07","time":"8 h 55 min","timeMinutes":535,"cause":"Changement du moule 16 vers moule 20","category":"Changement/Montage Moule"},{"file":"janvier (1)","sheet":"Semaine 1","date":"2026-01-07","time":"8 h 55 min","timeMinutes":535,"cause":"Dressage du moule 20","category":"Réglage/Maintenance Moule"},{"file":"janvier (1)","sheet":"Semaine 1","date":"2026-01-07","time":"8 h 55 min","timeMinutes":535,"cause":"Réglage du capteur du moule","category":"Réglage/Maintenance Moule"},{"file":"janvier (1)","sheet":"Semaine 1","date":"2026-01-07","time":"8 h 55 min","timeMinutes":535,"cause":"Réparation du vérin de dame","category":"Vérin/Dame"},{"file":"janvier (1)","sheet":"Semaine 1","date":"2026-01-07","time":"8 h 55 min","timeMinutes":535,"cause":"Nettoyage du malaxeur","category":"Nettoyage Malaxeur"},{"file":"janvier (1)","sheet":"Semaine 1","date":"2026-01-08","time":"4h 42 min","timeMinutes":282,"cause":"Nettoyage du moule / vérification","category":"Réglage/Maintenance Moule"},{"file":"janvier (1)","sheet":"Semaine 1","date":"2026-01-08","time":"4h 42 min","timeMinutes":282,"cause":"Changement de moule (20 → 16)","category":"Changement/Montage Moule"},{"file":"janvier (1)","sheet":"Semaine 1","date":"2026-01-08","time":"4h 42 min","timeMinutes":282,"cause":"Soudure du renverseur des planches","category":"Soudure"},{"file":"janvier (1)","sheet":"Semaine 1","date":"2026-01-08","time":"4h 42 min","timeMinutes":282,"cause":"Réparation de vérin","category":"Vérin/Dame"},{"file":"janvier (1)","sheet":"Semaine 1","date":"2026-01-08","time":"4h 42 min","timeMinutes":282,"cause":"Fixation du flexible de tiroir + soudure moule 16","category":"Réglage/Maintenance Moule"},{"file":"janvier (1)","sheet":"Semaine 1","date":"2026-01-08","time":"4h 42 min","timeMinutes":282,"cause":"Nettoyage + attente des colonnes pour séchage","category":"Nettoyage Général"},{"file":"janvier (1)","sheet":"Semaine 1","date":"2026-01-08","time":"4h 42 min","timeMinutes":282,"cause":"Coincement de planche","category":"Coincement/Blocage Planche"},{"file":"janvier (1)","sheet":"Semaine 1","date":"2026-01-08","time":"4h 42 min","timeMinutes":282,"cause":"Changement de courroie de vibreur","category":"Vibreur/Presse"},{"file":"janvier (1)","sheet":"Semaine 1","date":"2026-01-08","time":"4h 42 min","timeMinutes":282,"cause":"Nettoyage du malaxeur","category":"Nettoyage Malaxeur"},{"file":"janvier (1)","sheet":"Semaine 1","date":"2026-01-09","time":"7 h40 min","timeMinutes":460,"cause":"Nettoyage du moule","category":"Réglage/Maintenance Moule"},{"file":"janvier (1)","sheet":"Semaine 1","date":"2026-01-09","time":"7 h40 min","timeMinutes":460,"cause":"Problème du compresseur","category":"Problème Air/Compresseur"},{"file":"janvier (1)","sheet":"Semaine 1","date":"2026-01-09","time":"7 h40 min","timeMinutes":460,"cause":"Manque de planches","category":"Coincement/Blocage Planche"},{"file":"janvier (1)","sheet":"Semaine 1","date":"2026-01-09","time":"7 h40 min","timeMinutes":460,"cause":"Panne (masse au niveau du capteur de dame)","category":"Vérin/Dame"},{"file":"janvier (1)","sheet":"Semaine 1","date":"2026-01-09","time":"7 h40 min","timeMinutes":460,"cause":"Coincement de planche","category":"Coincement/Blocage Planche"},{"file":"janvier (1)","sheet":"Semaine 1","date":"2026-01-09","time":"7 h40 min","timeMinutes":460,"cause":"Changement de moule  (introducteur de moule en panne)","category":"Changement/Montage Moule"},{"file":"janvier (1)","sheet":"Semaine 1","date":"2026-01-09","time":"7 h40 min","timeMinutes":460,"cause":"Réparation du capteur du renverseur de planches","category":"Électrique/Capteur/Logiciel"},{"file":"janvier (1)","sheet":"Semaine 1","date":"2026-01-09","time":"7 h40 min","timeMinutes":460,"cause":"Serrage et contrôle du plateau","category":"Autres"},{"file":"janvier (1)","sheet":"Semaine 1","date":"2026-01-09","time":"7 h40 min","timeMinutes":460,"cause":"Nettoyage du malaxeur","category":"Nettoyage Malaxeur"},{"file":"janvier (1)","sheet":"Semaine 1","date":"2026-01-10","time":"7 h 3 min","timeMinutes":423,"cause":"Réglage support chariot","category":"Autres"},{"file":"janvier (1)","sheet":"Semaine 1","date":"2026-01-10","time":"7 h 3 min","timeMinutes":423,"cause":"Réglage boulons support dame","category":"Vérin/Dame"},{"file":"janvier (1)","sheet":"Semaine 1","date":"2026-01-10","time":"7 h 3 min","timeMinutes":423,"cause":"Nettoyage moule (répété 2 fois)","category":"Réglage/Maintenance Moule"},{"file":"janvier (1)","sheet":"Semaine 1","date":"2026-01-10","time":"7 h 3 min","timeMinutes":423,"cause":"Changement de moule (répété 2 fois)","category":"Changement/Montage Moule"},{"file":"janvier (1)","sheet":"Semaine 1","date":"2026-01-10","time":"7 h 3 min","timeMinutes":423,"cause":"Problème support chariot","category":"Pannes Diverses"},{"file":"janvier (1)","sheet":"Semaine 1","date":"2026-01-10","time":"7 h 3 min","timeMinutes":423,"cause":"Soudure chaîne escalier","category":"Chaîne/Extracteur/Ascenseur"},{"file":"janvier (1)","sheet":"Semaine 1","date":"2026-01-10","time":"7 h 3 min","timeMinutes":423,"cause":"Panne tige de table vibrante","category":"Pannes Diverses"},{"file":"janvier (1)","sheet":"Semaine 1","date":"2026-01-10","time":"7 h 3 min","timeMinutes":423,"cause":"Réparation chaîne d’ascenseur","category":"Chaîne/Extracteur/Ascenseur"},{"file":"janvier (1)","sheet":"Semaine 1","date":"2026-01-10","time":"7 h 3 min","timeMinutes":423,"cause":"Réparation vérin de dame","category":"Vérin/Dame"},{"file":"janvier (1)","sheet":"Semaine 1","date":"2026-01-10","time":"7 h 3 min","timeMinutes":423,"cause":"Coincement de pierre au niveau de la trémie sable 0/4","category":"Bascule/Trémie/Hydraulique"},{"file":"janvier (1)","sheet":"semaine 2","date":"2026-01-12","time":"2 h 15 min","timeMinutes":135,"cause":"Soudure moule 16 et changement de moule (2 h)","category":"Changement/Montage Moule"},{"file":"janvier (1)","sheet":"semaine 2","date":"2026-01-12","time":"2 h 15 min","timeMinutes":135,"cause":"Nettoyage du malaxeur (15 min)","category":"Nettoyage Malaxeur"},{"file":"janvier (1)","sheet":"semaine 2","date":"2026-01-13","time":"5 h 30 min","timeMinutes":330,"cause":"Montage du moule 16","category":"Changement/Montage Moule"},{"file":"janvier (1)","sheet":"semaine 2","date":"2026-01-13","time":"5 h 30 min","timeMinutes":330,"cause":"Forte casse en production (problème identifié et résolu)","category":"Pannes Diverses"},{"file":"janvier (1)","sheet":"semaine 2","date":"2026-01-13","time":"5 h 30 min","timeMinutes":330,"cause":"Fixation du vérin de dame","category":"Vérin/Dame"},{"file":"janvier (1)","sheet":"semaine 2","date":"2026-01-13","time":"5 h 30 min","timeMinutes":330,"cause":"Contrôle du vibreur (serrage du tendeur de courroie)","category":"Vibreur/Presse"},{"file":"janvier (1)","sheet":"semaine 2","date":"2026-01-13","time":"5 h 30 min","timeMinutes":330,"cause":"Nettoyage du malaxeur","category":"Nettoyage Malaxeur"},{"file":"janvier (1)","sheet":"semaine 2","date":"2026-01-13","time":"5 h 30 min","timeMinutes":330,"cause":"Problème au niveau du groupe hydraulique","category":"Bascule/Trémie/Hydraulique"},{"file":"janvier (1)","sheet":"semaine 2","date":"2026-01-14","time":"3 h 40 min","timeMinutes":220,"cause":"Problème de fixation du vérin de dame","category":"Vérin/Dame"},{"file":"janvier (1)","sheet":"semaine 2","date":"2026-01-14","time":"3 h 40 min","timeMinutes":220,"cause":"Réparation de la chaîne d’ascenseur","category":"Chaîne/Extracteur/Ascenseur"},{"file":"janvier (1)","sheet":"semaine 2","date":"2026-01-14","time":"3 h 40 min","timeMinutes":220,"cause":"Changement de moule","category":"Changement/Montage Moule"},{"file":"janvier (1)","sheet":"semaine 2","date":"2026-01-14","time":"3 h 40 min","timeMinutes":220,"cause":"Vérification fuite d’huile du vérin de dame","category":"Vérin/Dame"},{"file":"janvier (1)","sheet":"semaine 2","date":"2026-01-14","time":"3 h 40 min","timeMinutes":220,"cause":"Nettoyage du malaxeur","category":"Nettoyage Malaxeur"},{"file":"janvier (1)","sheet":"semaine 2","date":"2026-01-15","time":"4 h 25 min","timeMinutes":265,"cause":"Montage de moule","category":"Changement/Montage Moule"},{"file":"janvier (1)","sheet":"semaine 2","date":"2026-01-15","time":"4 h 25 min","timeMinutes":265,"cause":"Coincement de câble de skip","category":"Bascule/Trémie/Hydraulique"},{"file":"janvier (1)","sheet":"semaine 2","date":"2026-01-15","time":"4 h 25 min","timeMinutes":265,"cause":"Changement de moule","category":"Changement/Montage Moule"},{"file":"janvier (1)","sheet":"semaine 2","date":"2026-01-15","time":"4 h 25 min","timeMinutes":265,"cause":"Réglage des deux racleurs de tiroir (fuite de béton)","category":"Tiroir"},{"file":"janvier (1)","sheet":"semaine 2","date":"2026-01-15","time":"4 h 25 min","timeMinutes":265,"cause":"Soudure de l’axe du vérin de dame","category":"Vérin/Dame"},{"file":"janvier (1)","sheet":"semaine 2","date":"2026-01-15","time":"4 h 25 min","timeMinutes":265,"cause":"Nettoyage du malaxeur","category":"Nettoyage Malaxeur"},{"file":"janvier (1)","sheet":"semaine 2","date":"2026-01-16","time":"8 h 25 min","timeMinutes":505,"cause":"Réglage du tiroir","category":"Tiroir"},{"file":"janvier (1)","sheet":"semaine 2","date":"2026-01-16","time":"8 h 25 min","timeMinutes":505,"cause":"Changement du flexible du tiroir","category":"Tiroir"},{"file":"janvier (1)","sheet":"semaine 2","date":"2026-01-16","time":"8 h 25 min","timeMinutes":505,"cause":"Fixation des boulons du vérin de dame","category":"Vérin/Dame"},{"file":"janvier (1)","sheet":"semaine 2","date":"2026-01-16","time":"8 h 25 min","timeMinutes":505,"cause":"Écrasement du cardan du moteur du vibreur","category":"Vibreur/Presse"},{"file":"janvier (1)","sheet":"semaine 2","date":"2026-01-16","time":"8 h 25 min","timeMinutes":505,"cause":"Montage du cardan du vibreur","category":"Vibreur/Presse"},{"file":"janvier (1)","sheet":"semaine 2","date":"2026-01-16","time":"8 h 25 min","timeMinutes":505,"cause":"Vérification du coincement du skip","category":"Bascule/Trémie/Hydraulique"},{"file":"janvier (1)","sheet":"semaine 2","date":"2026-01-16","time":"8 h 25 min","timeMinutes":505,"cause":"Montage de la chaîne de l’extracteur","category":"Chaîne/Extracteur/Ascenseur"},{"file":"janvier (1)","sheet":"semaine 2","date":"2026-01-16","time":"8 h 25 min","timeMinutes":505,"cause":"Panne du vérin de dame (vérin de réserve non fonctionnel)","category":"Vérin/Dame"},{"file":"janvier (1)","sheet":"semaine 2","date":"2026-01-17","time":"6 h 30 min","timeMinutes":390,"cause":"Fixation du vérin de dame","category":"Vérin/Dame"},{"file":"janvier (1)","sheet":"semaine 2","date":"2026-01-17","time":"6 h 30 min","timeMinutes":390,"cause":"Changement du flexible du moule et du vérin de dame","category":"Changement/Montage Moule"},{"file":"janvier (1)","sheet":"semaine 2","date":"2026-01-17","time":"6 h 30 min","timeMinutes":390,"cause":"Montage de la goupille du vérin et soudure du vérin de dame","category":"Vérin/Dame"},{"file":"janvier (1)","sheet":"semaine 2","date":"2026-01-17","time":"6 h 30 min","timeMinutes":390,"cause":"Soudure du support du capteur du moule","category":"Réglage/Maintenance Moule"},{"file":"janvier (1)","sheet":"semaine 2","date":"2026-01-18","time":"1 h 40 min","timeMinutes":100,"cause":"Changement de moule","category":"Changement/Montage Moule"},{"file":"janvier (1)","sheet":"semaine 2","date":"2026-01-18","time":"1 h 40 min","timeMinutes":100,"cause":"Soudure du vérin de dame","category":"Vérin/Dame"},{"file":"janvier (1)","sheet":"semaine 3","date":"2026-01-19","time":"4 h 50 min","timeMinutes":290,"cause":"Montage du moule et coincement du skip","category":"Changement/Montage Moule"},{"file":"janvier (1)","sheet":"semaine 3","date":"2026-01-19","time":"4 h 50 min","timeMinutes":290,"cause":"Nettoyage du malaxeur de la centrale","category":"Nettoyage Malaxeur"},{"file":"janvier (1)","sheet":"semaine 3","date":"2026-01-19","time":"4 h 50 min","timeMinutes":290,"cause":"Réparation suite au coincement du skip","category":"Bascule/Trémie/Hydraulique"},{"file":"janvier (1)","sheet":"semaine 3","date":"2026-01-20","time":"2 h 35 min","timeMinutes":155,"cause":"Écrasement du cardan du vibreur","category":"Vibreur/Presse"},{"file":"janvier (1)","sheet":"semaine 3","date":"2026-01-20","time":"2 h 35 min","timeMinutes":155,"cause":"Montage du cardan du vibreur et changement de moule","category":"Changement/Montage Moule"},{"file":"janvier (1)","sheet":"semaine 3","date":"2026-01-20","time":"2 h 35 min","timeMinutes":155,"cause":"Soudure de l’axe du vérin de dame","category":"Vérin/Dame"},{"file":"janvier (1)","sheet":"semaine 3","date":"2026-01-21","time":"1 h 35 min","timeMinutes":95,"cause":"Changement de moule et essais du nouveau matériau 0/6","category":"Changement/Montage Moule"},{"file":"janvier (1)","sheet":"semaine 3","date":"2026-01-21","time":"1 h 35 min","timeMinutes":95,"cause":"Changement du distributeur de la trémie 3/6 (Hamdi)","category":"Bascule/Trémie/Hydraulique"},{"file":"janvier (1)","sheet":"semaine 3","date":"2026-01-22","time":"1 h 30 min","timeMinutes":90,"cause":"Problème au basculeur de ciment (problème d’air)","category":"Problème Air/Compresseur"},{"file":"janvier (1)","sheet":"semaine 3","date":"2026-01-22","time":"1 h 30 min","timeMinutes":90,"cause":"Nettoyage du malaxeur","category":"Nettoyage Malaxeur"},{"file":"janvier (1)","sheet":"semaine 3","date":"2026-01-22","time":"1 h 30 min","timeMinutes":90,"cause":"Changement de moule","category":"Changement/Montage Moule"},{"file":"janvier (1)","sheet":"semaine 3","date":"2026-01-23","time":"5 h 40 min","timeMinutes":340,"cause":"Changement de moule (répété deux fois)","category":"Changement/Montage Moule"},{"file":"janvier (1)","sheet":"semaine 3","date":"2026-01-23","time":"5 h 40 min","timeMinutes":340,"cause":"Manque de ciment","category":"Autres"},{"file":"janvier (1)","sheet":"semaine 3","date":"2026-01-23","time":"5 h 40 min","timeMinutes":340,"cause":"Changement de vérin de dame","category":"Vérin/Dame"},{"file":"janvier (1)","sheet":"semaine 3","date":"2026-01-24","time":"1 h 30 min","timeMinutes":90,"cause":"Nettoyage du malaxeur (répété deux fois)","category":"Nettoyage Malaxeur"},{"file":"janvier (1)","sheet":"semaine 3","date":"2026-01-25","time":"1 h 10 min","timeMinutes":70,"cause":"Montage de moule 16","category":"Changement/Montage Moule"},{"file":"janvier (1)","sheet":"semaine 3","date":"2026-01-25","time":"1 h 10 min","timeMinutes":70,"cause":"Réglage de la courroie du vibreur de presse","category":"Vibreur/Presse"},{"file":"janvier (1)","sheet":"semaine 3","date":"2026-01-25","time":"1 h 10 min","timeMinutes":70,"cause":"Nettoyage du skip","category":"Nettoyage Général"},{"file":"janvier (1)","sheet":"semaine 4","date":"2026-01-26","time":"1 h 15 min","timeMinutes":75,"cause":"Nettoyage du malaxeur (répété deux fois)","category":"Nettoyage Malaxeur"},{"file":"janvier (1)","sheet":"semaine 4","date":"2026-01-26","time":"1 h 15 min","timeMinutes":75,"cause":"Changement de moule","category":"Changement/Montage Moule"},{"file":"janvier (1)","sheet":"semaine 4","date":"2026-01-27","time":"50 min","timeMinutes":50,"cause":"Nettoyage du malaxeur","category":"Nettoyage Malaxeur"},{"file":"janvier (1)","sheet":"semaine 4","date":"2026-01-27","time":"50 min","timeMinutes":50,"cause":"Changement de moule","category":"Changement/Montage Moule"},{"file":"janvier (1)","sheet":"semaine 4","date":"2026-01-28","time":"1 h 05 min","timeMinutes":65,"cause":"Nettoyage du malaxeur (répété deux fois)","category":"Nettoyage Malaxeur"},{"file":"janvier (1)","sheet":"semaine 4","date":"2026-01-28","time":"1 h 05 min","timeMinutes":65,"cause":"Changement des boulons de la dame","category":"Vérin/Dame"},{"file":"janvier (1)","sheet":"semaine 4","date":"2026-01-29","time":"2 h 25 min","timeMinutes":145,"cause":"Changement de moule (répété deux fois – introducteur en panne)","category":"Changement/Montage Moule"},{"file":"janvier (1)","sheet":"semaine 4","date":"2026-01-29","time":"2 h 25 min","timeMinutes":145,"cause":"Essai d’une nouvelle formule (perte de temps)","category":"Autres"},{"file":"janvier (1)","sheet":"semaine 4","date":"2026-01-29","time":"2 h 25 min","timeMinutes":145,"cause":"Panne fermeture bascule d’eau","category":"Bascule/Trémie/Hydraulique"},{"file":"janvier (1)","sheet":"semaine 4","date":"2026-01-29","time":"2 h 25 min","timeMinutes":145,"cause":"Nettoyage du malaxeur (répété deux fois)","category":"Nettoyage Malaxeur"},{"file":"janvier (1)","sheet":"semaine 4","date":"2026-01-29","time":"2 h 25 min","timeMinutes":145,"cause":"Soudure de fixation du vérin de tiroir","category":"Vérin/Dame"},{"file":"janvier (1)","sheet":"semaine 4","date":"2026-01-30","time":"1 h 55 min","timeMinutes":115,"cause":"Réglage de moule","category":"Réglage/Maintenance Moule"},{"file":"janvier (1)","sheet":"semaine 4","date":"2026-01-30","time":"1 h 55 min","timeMinutes":115,"cause":"Nettoyage du malaxeur","category":"Nettoyage Malaxeur"},{"file":"janvier (1)","sheet":"semaine 4","date":"2026-01-30","time":"1 h 55 min","timeMinutes":115,"cause":"Problème au compresseur d’air","category":"Problème Air/Compresseur"},{"file":"janvier (1)","sheet":"semaine 4","date":"2026-01-30","time":"1 h 55 min","timeMinutes":115,"cause":"Écrasement de l’axe du vérin du tiroir","category":"Vérin/Dame"},{"file":"janvier (1)","sheet":"semaine 4","date":"2026-01-30","time":"1 h 55 min","timeMinutes":115,"cause":"Nettoyage de moule","category":"Réglage/Maintenance Moule"},{"file":"janvier (1)","sheet":"semaine 4","date":"2026-01-31","time":"1 h 25 min","timeMinutes":85,"cause":"Réglage du capteur d’extracteur","category":"Chaîne/Extracteur/Ascenseur"},{"file":"janvier (1)","sheet":"semaine 4","date":"2026-01-31","time":"1 h 25 min","timeMinutes":85,"cause":"Nettoyage du malaxeur (répété deux fois)","category":"Nettoyage Malaxeur"},{"file":"janvier (1)","sheet":"semaine 4","date":"2026-01-31","time":"1 h 25 min","timeMinutes":85,"cause":"Changement de moule","category":"Changement/Montage Moule"}];
+
+        let charts = {};
+        function destroyCharts() { Object.values(charts).forEach(c => { if (c) c.destroy() }); charts = {} }
+
+        function getFiltered() {
+            return allData.filter(d => {
+                if (activeFilters.file !== 'all' && d.file !== activeFilters.file) return false;
+                if (activeFilters.week !== 'all' && d.sheet !== activeFilters.week) return false;
+                if (activeFilters.cat !== 'all' && d.category !== activeFilters.cat) return false;
+                return true;
+            });
+        }
+
+        function render() {
+            const data = getFiltered();
+            const total = data.length;
+            const catCount = {}, catByFile = {}, dateMinutes = {}, weekCats = {};
+            const uniqueDates = new Set(), uniqueWeeks = new Set();
+            data.forEach(d => {
+                catCount[d.category] = (catCount[d.category] || 0) + 1;
+                if (!catByFile[d.file]) catByFile[d.file] = {};
+                catByFile[d.file][d.category] = (catByFile[d.file][d.category] || 0) + 1;
+                if (d.date) { uniqueDates.add(d.date); dateMinutes[d.date] = (dateMinutes[d.date] || 0) + d.timeMinutes }
+                if (d.sheet) { uniqueWeeks.add(d.sheet); const wk = d.file + '|' + d.sheet; if (!weekCats[wk]) weekCats[wk] = {}; weekCats[wk][d.category] = (weekCats[wk][d.category] || 0) + 1 }
+            });
+            const categories = Object.entries(catCount).sort((a, b) => b[1] - a[1]);
+            const catNames = categories.map(c => c[0]), catValues = categories.map(c => c[1]);
+            const dates = [...uniqueDates].sort();
+            const totalMinutes = Object.values(dateMinutes).reduce((a, b) => a + b, 0);
+            const avgPerDay = dates.length ? (totalMinutes / dates.length).toFixed(0) : 0;
+            const maxDay = Object.entries(dateMinutes).sort((a, b) => b[1] - a[1])[0];
+
+            // Header badges
+            const dateStr = dates.length ? `${dates[0]} → ${dates[dates.length - 1]}` : '—';
+            document.getElementById('headerBadges').innerHTML = `
+        <span class="badge badge-cyan">📅 ${dateStr}</span>
+        <span class="badge badge-purple">📁 ${filesLoaded.length} fichier(s)</span>
+        <span class="badge badge-green">📊 ${total} événements analysés</span>`;
+
+            // KPIs
+            const totalH = Math.floor(totalMinutes / 60), totalM = totalMinutes % 60;
+            document.getElementById('kpiRow').innerHTML = `
+      <div class="kpi animate"><div class="kpi-icon">📊</div><div class="kpi-value">${total}</div><div class="kpi-label">Événements</div><div class="kpi-sub">Total des arrêts</div></div>
+      <div class="kpi animate animate-d1"><div class="kpi-icon">🏷️</div><div class="kpi-value">${categories.length}</div><div class="kpi-label">Catégories</div><div class="kpi-sub">Types identifiés</div></div>
+      <div class="kpi animate animate-d2"><div class="kpi-icon">⏱️</div><div class="kpi-value">${totalH}h${totalM > 0 ? totalM + 'm' : ''}</div><div class="kpi-label">Temps total</div><div class="kpi-sub">Durée cumulée</div></div>
+      <div class="kpi animate animate-d3"><div class="kpi-icon">📅</div><div class="kpi-value">${dates.length}</div><div class="kpi-label">Jours</div><div class="kpi-sub">De production</div></div>
+      <div class="kpi animate animate-d4"><div class="kpi-icon">⚡</div><div class="kpi-value">${avgPerDay}m</div><div class="kpi-label">Moyenne/Jour</div><div class="kpi-sub">Temps d'arrêt moy.</div></div>`;
+
+            // Mini stats
+            const topCat = categories[0] || ['—', 0];
+            const topPct = total ? ((topCat[1] / total) * 100).toFixed(1) : 0;
+            const worstDay = maxDay ? maxDay[0] : '—';
+            const worstDayMins = maxDay ? maxDay[1] : 0;
+            const worstH = Math.floor(worstDayMins / 60), worstM = worstDayMins % 60;
+            const uniqueC = [...new Set(data.map(d => d.cause))].length;
+            document.getElementById('miniStats').innerHTML = `
+      <div class="mini-stat animate"><div class="ms-header"><span class="ms-title">🔝 Cause #1</span><span class="ms-icon">🏆</span></div><div class="ms-value" style="font-size:1.2rem;color:#818cf8">${topCat[0]}</div><div class="ms-desc">${topCat[1]} occurrences (${topPct}%)</div><div class="ms-bar"><div class="ms-bar-fill" style="width:${topPct}%;background:linear-gradient(90deg,#818cf8,#c084fc)"></div></div></div>
+      <div class="mini-stat animate animate-d1"><div class="ms-header"><span class="ms-title">📛 Pire journée</span><span class="ms-icon">⚠️</span></div><div class="ms-value" style="font-size:1.4rem;color:#f87171">${worstH}h${worstM > 0 ? worstM + 'm' : ''}</div><div class="ms-desc">${worstDay}</div><div class="ms-bar"><div class="ms-bar-fill" style="width:${dates.length ? Math.min(100, (worstDayMins / (totalMinutes / dates.length) * 50)).toFixed(0) : 0}%;background:linear-gradient(90deg,#f87171,#fb923c)"></div></div></div>
+      <div class="mini-stat animate animate-d2"><div class="ms-header"><span class="ms-title">🔧 Causes uniques</span><span class="ms-icon">📝</span></div><div class="ms-value" style="color:#34d399">${uniqueC}</div><div class="ms-desc">Descriptions différentes</div><div class="ms-bar"><div class="ms-bar-fill" style="width:${Math.min(100, (uniqueC / total * 100)).toFixed(0)}%;background:linear-gradient(90deg,#34d399,#22d3ee)"></div></div></div>`;
+
+            // CHARTS
+            destroyCharts();
+            const getCatColor = (cat, i) => CAT_COLORS[cat] || COLORS[i % COLORS.length];
+
+            // Doughnut
+            charts.doughnut = new Chart(document.getElementById('doughnutChart'), {
+                type: 'doughnut',
+                data: { labels: catNames, datasets: [{ data: catValues, backgroundColor: catNames.map((n, i) => getCatColor(n, i)), borderWidth: 0, hoverOffset: 14, hoverBorderWidth: 2, hoverBorderColor: '#fff' }] },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right', labels: { color: '#94a3b8', font: { size: 11, family: 'Outfit' }, padding: 10, usePointStyle: true, pointStyleWidth: 8 } }, tooltip: { backgroundColor: 'rgba(15,23,42,.95)', titleFont: { family: 'Outfit', weight: '700' }, bodyFont: { family: 'Outfit' }, borderColor: 'rgba(129,140,248,.3)', borderWidth: 1, callbacks: { label: ctx => `${ctx.label}: ${ctx.raw} (${((ctx.raw / total) * 100).toFixed(1)}%)` } } }, cutout: '65%', animation: { animateRotate: true, duration: 1200 } }
+            });
+
+            // Bar
+            charts.bar = new Chart(document.getElementById('barChart'), {
+                type: 'bar',
+                data: { labels: catNames.slice(0, 10), datasets: [{ label: 'Occurrences', data: catValues.slice(0, 10), backgroundColor: catNames.slice(0, 10).map((n, i) => getCatColor(n, i) + 'cc'), borderColor: catNames.slice(0, 10).map((n, i) => getCatColor(n, i)), borderWidth: 1.5, borderRadius: 10, barPercentage: .65 }] },
+                options: { responsive: true, maintainAspectRatio: false, indexAxis: 'y', plugins: { legend: { display: false }, tooltip: { backgroundColor: 'rgba(15,23,42,.95)', bodyFont: { family: 'Outfit' }, callbacks: { label: ctx => `${ctx.raw} (${((ctx.raw / total) * 100).toFixed(1)}%)` } } }, scales: { x: { grid: { color: 'rgba(255,255,255,0.03)' }, ticks: { color: '#64748b', font: { family: 'Outfit' } } }, y: { grid: { display: false }, ticks: { color: '#94a3b8', font: { size: 10, family: 'Outfit' } } } }, animation: { duration: 1000 } }
+            });
+
+            // Radar
+            const fNames = Object.keys(catByFile);
+            const top7 = catNames.slice(0, 7);
+            charts.radar = new Chart(document.getElementById('radarChart'), {
+                type: 'radar',
+                data: { labels: top7, datasets: fNames.map((fn, i) => ({ label: fn, data: top7.map(c => catByFile[fn][c] || 0), backgroundColor: COLORS[i % COLORS.length] + '33', borderColor: COLORS[i % COLORS.length], borderWidth: 2, pointRadius: 4, pointBackgroundColor: COLORS[i % COLORS.length], pointHoverRadius: 6 })) },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: '#94a3b8', padding: 14, font: { family: 'Outfit' } } } }, scales: { r: { grid: { color: 'rgba(255,255,255,0.05)' }, angleLines: { color: 'rgba(255,255,255,0.05)' }, pointLabels: { color: '#94a3b8', font: { size: 10, family: 'Outfit' } }, ticks: { display: false } } } }
+            });
+
+            // Polar
+            charts.polar = new Chart(document.getElementById('polarChart'), {
+                type: 'polarArea',
+                data: { labels: catNames.slice(0, 10), datasets: [{ data: catValues.slice(0, 10), backgroundColor: catNames.slice(0, 10).map((n, i) => getCatColor(n, i) + '88'), borderColor: catNames.slice(0, 10).map((n, i) => getCatColor(n, i)), borderWidth: 1.5 }] },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right', labels: { color: '#94a3b8', font: { size: 10, family: 'Outfit' }, padding: 8, usePointStyle: true } }, tooltip: { backgroundColor: 'rgba(15,23,42,.95)', bodyFont: { family: 'Outfit' } } }, scales: { r: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { display: false } } }, animation: { animateRotate: true, duration: 1200 } }
+            });
+
+            // Timeline
+            const sortedDates = [...new Set(data.map(d => d.date).filter(Boolean))].sort();
+            const dailyMins = sortedDates.map(d => dateMinutes[d] || 0);
+            charts.timeline = new Chart(document.getElementById('timelineChart'), {
+                type: 'line',
+                data: { labels: sortedDates.map(d => { const p = d.split('-'); return p[2] + '/' + p[1] }), datasets: [{ label: 'Minutes d\'arrêt', data: dailyMins, borderColor: '#818cf8', backgroundColor: 'rgba(129,140,248,.08)', fill: true, tension: .4, pointRadius: 4, pointBackgroundColor: '#818cf8', pointBorderColor: '#070b14', pointBorderWidth: 2, pointHoverRadius: 7, borderWidth: 2.5 }, { label: 'Moyenne', data: Array(sortedDates.length).fill(+avgPerDay), borderColor: 'rgba(248,113,113,.5)', borderDash: [6, 4], borderWidth: 1.5, pointRadius: 0, fill: false }] },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: '#94a3b8', font: { family: 'Outfit' } } }, tooltip: { backgroundColor: 'rgba(15,23,42,.95)', bodyFont: { family: 'Outfit' }, callbacks: { label: ctx => `${ctx.raw} min (${Math.floor(ctx.raw / 60)}h${ctx.raw % 60}m)` } } }, scales: { x: { grid: { color: 'rgba(255,255,255,0.03)' }, ticks: { color: '#64748b', font: { family: 'Outfit', size: 10 }, maxRotation: 45 } }, y: { grid: { color: 'rgba(255,255,255,0.03)' }, ticks: { color: '#64748b', font: { family: 'Outfit' } } } }, animation: { duration: 1500 } }
+            });
+
+            // Stacked by week
+            const weekKeys = [...new Set(data.map(d => d.file + '|' + d.sheet))].sort();
+            const top5cats = catNames.slice(0, 5);
+            charts.stacked = new Chart(document.getElementById('stackedChart'), {
+                type: 'bar',
+                data: { labels: weekKeys.map(w => { const [f, s] = w.split('|'); return s + ' (' + f.substring(0, 3) + ')' }), datasets: top5cats.map((cat, i) => ({ label: cat, data: weekKeys.map(wk => weekCats[wk]?.[cat] || 0), backgroundColor: getCatColor(cat, i) + 'aa', borderColor: getCatColor(cat, i), borderWidth: 1, borderRadius: 6 })) },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: '#94a3b8', font: { family: 'Outfit', size: 11 }, padding: 12, usePointStyle: true } }, tooltip: { backgroundColor: 'rgba(15,23,42,.95)', bodyFont: { family: 'Outfit' }, mode: 'index' } }, scales: { x: { stacked: true, grid: { display: false }, ticks: { color: '#94a3b8', font: { family: 'Outfit', size: 10 } } }, y: { stacked: true, grid: { color: 'rgba(255,255,255,0.03)' }, ticks: { color: '#64748b', font: { family: 'Outfit' } } } }, animation: { duration: 1000 } }
+            });
+
+            // Stats table
+            const allDates = [...new Set(allData.map(d => d.date).filter(Boolean))];
+            const numDays = allDates.length || 1;
+            let thtml = '';
+            categories.forEach(([cat, count], i) => {
+                const pct = ((count / total) * 100).toFixed(1);
+                const avg = (count / numDays).toFixed(1);
+                const col = getCatColor(cat, i);
+                const fileData = Object.entries(catByFile);
+                let trend = '—';
+                if (fileData.length >= 2) { const f1 = fileData[0][1][cat] || 0, f2 = fileData[1][1][cat] || 0; trend = f2 > f1 ? '↗' : '↘'; if (f2 === f1) trend = '→' }
+                thtml += `<tr><td><span class="cat-badge" style="background:${col}18;color:${col}"><span class="cat-dot" style="background:${col}"></span>${cat}</span></td><td><strong>${count}</strong></td><td class="pct-value">${pct}%</td><td><div class="pct-bar"><div class="pct-bar-fill" style="width:${pct}%;background:linear-gradient(90deg,${col},${col}88)"></div></div></td><td style="color:var(--text2)">${avg}</td><td class="${trend === '↗' ? 'trend-up' : trend === '↘' ? 'trend-down' : 'trend-flat'}" style="font-size:1.1rem;font-weight:700">${trend}</td></tr>`;
+            });
+            document.getElementById('statsBody').innerHTML = thtml;
+
+            // Filters
+            const allFiles = [...new Set(allData.map(d => d.file))];
+            const allWeeks = [...new Set(allData.map(d => d.sheet))];
+            const allCats = [...new Set(allData.map(d => d.category))].sort();
+            let fHtml = '<button class="filter-btn' + (activeFilters.file === 'all' ? ' active-cyan' : '') + '" data-filter="file" data-val="all">Tous</button>';
+            allFiles.forEach(f => fHtml += `<button class="filter-btn${activeFilters.file === f ? ' active-cyan' : ''}" data-filter="file" data-val="${f}">${f}</button>`);
+            document.getElementById('filterFiles').innerHTML = fHtml;
+            let wHtml = '<button class="filter-btn' + (activeFilters.week === 'all' ? ' active-purple' : '') + '" data-filter="week" data-val="all">Toutes</button>';
+            allWeeks.forEach(w => wHtml += `<button class="filter-btn${activeFilters.week === w ? ' active-purple' : ''}" data-filter="week" data-val="${w}">${w}</button>`);
+            document.getElementById('filterWeeks').innerHTML = wHtml;
+            let cHtml = '<button class="filter-btn' + (activeFilters.cat === 'all' ? ' active-green' : '') + '" data-filter="cat" data-val="all">Toutes</button>';
+            allCats.forEach(c => cHtml += `<button class="filter-btn${activeFilters.cat === c ? ' active-green' : ''}" data-filter="cat" data-val="${c}">${c}</button>`);
+            document.getElementById('filterCats').innerHTML = cHtml;
+
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const ft = btn.dataset.filter, val = btn.dataset.val;
+                    activeFilters[ft] = val;
+                    render();
+                });
+            });
+
+            renderCauseList(data);
+            renderFileTags();
+        }
+
+        function renderCauseList(data) {
+            const sorted = [...data].sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+            const show = sorted.slice(0, 120);
+            let html = '';
+            show.forEach(d => {
+                const col = CAT_COLORS[d.category] || '#818cf8';
+                html += `<div class="cause-item"><span class="ci-date">${d.date || '—'}</span><span class="ci-cause">${d.cause}</span><span class="ci-cat" style="background:${col}18;color:${col}">${d.category}</span><span class="ci-file">${d.file}</span></div>`;
+            });
+            if (!html) html = '<div style="text-align:center;padding:32px;color:var(--text3)">Aucun événement trouvé</div>';
+            document.getElementById('causeList').innerHTML = html;
+            document.getElementById('causeCount').textContent = `${data.length} événement(s) trouvé(s)${data.length > 120 ? ' — 120 premiers affichés' : ''}`;
+        }
+
+        function renderFileTags() {
+            let t = '';
+            filesLoaded.forEach(f => t += `<span class="file-tag">📄 ${f} <span class="remove" data-file="${f}">✕</span></span>`);
+            document.getElementById('fileTags').innerHTML = t;
+            document.querySelectorAll('.file-tag .remove').forEach(el => {
+                el.addEventListener('click', () => { const fn = el.dataset.file; allData = allData.filter(d => d.file !== fn); filesLoaded = filesLoaded.filter(f => f !== fn); activeFilters = { file: 'all', week: 'all', cat: 'all' }; render() });
+            });
+        }
+
+        const importZone = document.getElementById('importZone'), fileInput = document.getElementById('fileInput');
+        importZone.addEventListener('click', () => fileInput.click());
+        importZone.addEventListener('dragover', e => { e.preventDefault(); importZone.classList.add('drag-over') });
+        importZone.addEventListener('dragleave', () => importZone.classList.remove('drag-over'));
+        importZone.addEventListener('drop', e => { e.preventDefault(); importZone.classList.remove('drag-over'); handleFiles(e.dataTransfer.files) });
+        fileInput.addEventListener('change', e => handleFiles(e.target.files));
+
+        function handleFiles(fl) {
+            Array.from(fl).forEach(file => {
+                if (!file.name.match(/\.xlsx?$/i)) return;
+                const reader = new FileReader();
+                reader.onload = e => {
+                    const d = new Uint8Array(e.target.result), wb = XLSX.read(d, { type: 'array' }), fn = file.name.replace(/\.xlsx?$/, '');
+                    allData = allData.filter(d => d.file !== fn); filesLoaded = filesLoaded.filter(f => f !== fn);
+                    allData.push(...parseExcelData(wb, fn)); filesLoaded.push(fn);
+                    activeFilters = { file: 'all', week: 'all', cat: 'all' }; render();
+                };
+                reader.readAsArrayBuffer(file);
+            });
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            if (PRELOADED && PRELOADED.length) { allData = PRELOADED; filesLoaded = [...new Set(PRELOADED.map(d => d.file))]; }
+            render();
+        });
+    </script>
+</body>
+
+</html>
